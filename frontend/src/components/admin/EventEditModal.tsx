@@ -49,7 +49,7 @@ function EventEditModal({ event, categories, onSave, onClose }: EventEditModalPr
       await onSave(event.id, formData);
       onClose();
     } catch (err) {
-      setError('Failed to save event');
+      setError('Не удалось сохранить мероприятие');
       console.error(err);
     } finally {
       setSaving(false);
@@ -65,13 +65,13 @@ function EventEditModal({ event, categories, onSave, onClose }: EventEditModalPr
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal" onClick={e => e.stopPropagation()}>
-        <h2>Edit Event</h2>
+        <h2>Редактировать мероприятие</h2>
 
         {error && <div className="error-message">{error}</div>}
 
         <form onSubmit={handleSubmit}>
           <div className="form-group">
-            <label htmlFor="category">Category</label>
+            <label htmlFor="category">Категория</label>
             <select
               id="category"
               value={formData.category_id}
@@ -79,25 +79,25 @@ function EventEditModal({ event, categories, onSave, onClose }: EventEditModalPr
             >
               {categories.map(cat => (
                 <option key={cat.id} value={cat.id}>
-                  {cat.name} (Month {cat.month})
+                  {cat.name} (Месяц {cat.month})
                 </option>
               ))}
             </select>
           </div>
 
           <div className="form-group">
-            <label htmlFor="number">Number</label>
+            <label htmlFor="number">№ п/п</label>
             <input
               id="number"
               type="text"
               value={formData.number}
               onChange={e => handleChange('number', e.target.value)}
-              placeholder="e.g. 1.1"
+              placeholder="например, 1.1"
             />
           </div>
 
           <div className="form-group">
-            <label htmlFor="name">Name *</label>
+            <label htmlFor="name">Название *</label>
             <input
               id="name"
               type="text"
@@ -108,18 +108,18 @@ function EventEditModal({ event, categories, onSave, onClose }: EventEditModalPr
           </div>
 
           <div className="form-group">
-            <label htmlFor="event_date">Date</label>
+            <label htmlFor="event_date">Дата</label>
             <input
               id="event_date"
               type="text"
               value={formData.event_date}
               onChange={e => handleChange('event_date', e.target.value)}
-              placeholder="e.g. 15-20 September"
+              placeholder="например, 15-20 сентября"
             />
           </div>
 
           <div className="form-group">
-            <label htmlFor="responsible">Responsible</label>
+            <label htmlFor="responsible">Ответственные</label>
             <input
               id="responsible"
               type="text"
@@ -129,7 +129,7 @@ function EventEditModal({ event, categories, onSave, onClose }: EventEditModalPr
           </div>
 
           <div className="form-group">
-            <label htmlFor="location">Location</label>
+            <label htmlFor="location">Место проведения</label>
             <input
               id="location"
               type="text"
@@ -139,7 +139,7 @@ function EventEditModal({ event, categories, onSave, onClose }: EventEditModalPr
           </div>
 
           <div className="form-group">
-            <label htmlFor="description">Description</label>
+            <label htmlFor="description">Пояснение</label>
             <textarea
               id="description"
               value={formData.description}
@@ -149,7 +149,7 @@ function EventEditModal({ event, categories, onSave, onClose }: EventEditModalPr
           </div>
 
           <div className="form-group">
-            <label htmlFor="sort_order">Sort Order</label>
+            <label htmlFor="sort_order">Порядок сортировки</label>
             <input
               id="sort_order"
               type="number"
@@ -160,10 +160,10 @@ function EventEditModal({ event, categories, onSave, onClose }: EventEditModalPr
 
           <div className="modal-actions">
             <button type="button" className="btn-secondary" onClick={onClose} disabled={saving}>
-              Cancel
+              Отмена
             </button>
             <button type="submit" className="btn-primary" disabled={saving}>
-              {saving ? 'Saving...' : 'Save'}
+              {saving ? 'Сохранение...' : 'Сохранить'}
             </button>
           </div>
         </form>

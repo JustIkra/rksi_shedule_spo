@@ -10,8 +10,8 @@ function App() {
       <Routes>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/events" element={<EventsPage />} />
-        <Route path="/admin/:token" element={<AdminLoginPage />} />
-        <Route path="/admin/:token/panel" element={<AdminPage />} />
+        <Route path="/admin" element={<AdminLoginPage />} />
+        <Route path="/admin/panel" element={<AdminPage />} />
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </BrowserRouter>

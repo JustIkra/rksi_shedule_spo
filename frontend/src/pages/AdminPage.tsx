@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { adminApi, EventCreate, EventUpdate, CategoryCreate } from '../api/admin';
 import { CategoryWithEvents, Category, Event } from '../api/types';
@@ -10,12 +10,11 @@ import SettingsPanel from '../components/admin/SettingsPanel';
 type TabType = 'events' | 'import-export' | 'settings';
 
 const MONTHS = [
-  'January', 'February', 'March', 'April', 'May', 'June',
-  'July', 'August', 'September', 'October', 'November', 'December'
+  'Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
+  'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'
 ];
 
 function AdminPage() {
-  const { token } = useParams<{ token: string }>();
   const navigate = useNavigate();
   const { isAuthenticated, isAdmin } = useAuth();
 
@@ -46,8 +45,6 @@ function AdminPage() {
     sort_order: 0,
   });
 
-  const expectedToken = import.meta.env.VITE_ADMIN_URL_TOKEN;
-
   const loadData = useCallback(async () => {
     try {
       setLoading(true);
@@ -60,7 +57,7 @@ function AdminPage() {
         setNewEvent(prev => ({ ...prev, category_id: cats[0].id }));
       }
     } catch (err) {
-      setError('Failed to load data');
+      setError('Не удалось загрузить данные');
       console.error(err);
     } finally {
       setLoading(false);
@@ -68,29 +65,14 @@ function AdminPage() {
   }, [newEvent.category_id]);
 
   useEffect(() => {
-    // Validate URL token
-    if (token !== expectedToken) {
-      navigate('/login');
-      return;
-    }
-
-    // Check if admin token is stored
-    const storedAdminToken = localStorage.getItem('adminToken');
-    if (storedAdminToken !== token) {
-      navigate(`/admin/${token}`);
-      return;
-    }
-  }, [token, expectedToken, navigate]);
-
-  useEffect(() => {
     if (isAuthenticated === false) {
-      navigate(`/admin/${token}`);
+      navigate('/admin');
     } else if (isAuthenticated && !isAdmin) {
       navigate('/events');
     } else if (isAuthenticated && isAdmin) {
       loadData();
     }
-  }, [isAuthenticated, isAdmin, navigate, token, loadData]);
+  }, [isAuthenticated, isAdmin, navigate, loadData]);
 
   const handleUpdateEvent = async (id: number, data: EventUpdate) => {
     await adminApi.updateEvent(id, data);
@@ -98,13 +80,13 @@ function AdminPage() {
   };
 
   const handleDeleteEvent = async (id: number) => {
-    if (!confirm('Are you sure you want to delete this event?')) return;
+    if (!confirm('Вы уверены, что хотите удалить это мероприятие?')) return;
 
     try {
       await adminApi.deleteEvent(id);
       await loadData();
     } catch (err) {
-      setError('Failed to delete event');
+      setError('Не удалось удалить мероприятие');
       console.error(err);
     }
   };
@@ -126,7 +108,7 @@ function AdminPage() {
       });
       await loadData();
     } catch (err) {
-      setError('Failed to add event');
+      setError('Не удалось добавить мероприятие');
       console.error(err);
     }
   };
@@ -139,7 +121,7 @@ function AdminPage() {
       setNewCategory({ name: '', month: 1, sort_order: 0 });
       await loadData();
     } catch (err) {
-      setError('Failed to add category');
+      setError('Не удалось добавить категорию');
       console.error(err);
     }
   };
@@ -149,22 +131,21 @@ function AdminPage() {
     const eventsCount = categories.find(c => c.id === id)?.events.length || 0;
 
     if (!confirm(
-      `Are you sure you want to delete category "${category?.name}"?\n` +
-      `This will also delete ${eventsCount} events in this category.`
+      `Вы уверены, что хотите удалить категорию "${category?.name}"?\n` +
+      `Это также удалит ${eventsCount} мероприятий в этой категории.`
     )) return;
 
     try {
       await adminApi.deleteCategory(id);
       await loadData();
     } catch (err) {
-      setError('Failed to delete category');
+      setError('Не удалось удалить категорию');
       console.error(err);
     }
   };
 
   const handleLogout = () => {
     localStorage.removeItem('token');
-    localStorage.removeItem('adminToken');
     navigate('/login');
   };
 
@@ -172,7 +153,7 @@ function AdminPage() {
     return (
       <div className="admin-layout">
         <div className="admin-content">
-          <p>Loading...</p>
+          <p>Загрузка...</p>
         </div>
       </div>
     );
@@ -182,32 +163,32 @@ function AdminPage() {
     <div className="admin-layout">
       <div className="admin-sidebar">
         <div className="admin-sidebar-header">
-          <h2>Admin Panel</h2>
-          <p>SPO Events</p>
+          <h2>Панель администратора</h2>
+          <p>Мероприятия СПО</p>
         </div>
         <nav className="admin-nav">
           <button
             className={`admin-nav-item ${activeTab === 'events' ? 'active' : ''}`}
             onClick={() => setActiveTab('events')}
           >
-            Events
+            Мероприятия
           </button>
           <button
             className={`admin-nav-item ${activeTab === 'import-export' ? 'active' : ''}`}
             onClick={() => setActiveTab('import-export')}
           >
-            Import / Export
+            Импорт / Экспорт
           </button>
           <button
             className={`admin-nav-item ${activeTab === 'settings' ? 'active' : ''}`}
             onClick={() => setActiveTab('settings')}
           >
-            Settings
+            Настройки
           </button>
         </nav>
         <div className="admin-sidebar-footer">
           <button className="btn-logout" onClick={handleLogout}>
-            Logout
+            Выйти
           </button>
         </div>
       </div>
@@ -218,13 +199,13 @@ function AdminPage() {
         {activeTab === 'events' && (
           <div className="events-management">
             <div className="events-header">
-              <h2>Events Management</h2>
+              <h2>Управление мероприятиями</h2>
               <div className="events-actions">
                 <button className="btn-primary" onClick={() => setShowAddEvent(true)}>
-                  Add Event
+                  Добавить мероприятие
                 </button>
                 <button className="btn-secondary" onClick={() => setShowAddCategory(true)}>
-                  Add Category
+                  Добавить категорию
                 </button>
               </div>
             </div>
@@ -240,19 +221,19 @@ function AdminPage() {
                     className="btn-danger btn-small"
                     onClick={() => handleDeleteCategory(category.id)}
                   >
-                    Delete Category
+                    Удалить категорию
                   </button>
                 </div>
 
                 <table className="events-table">
                   <thead>
                     <tr>
-                      <th>No.</th>
-                      <th>Name</th>
-                      <th>Date</th>
-                      <th>Responsible</th>
-                      <th>Location</th>
-                      <th>Actions</th>
+                      <th>№ п/п</th>
+                      <th>Название</th>
+                      <th>Дата</th>
+                      <th>Ответственные</th>
+                      <th>Место проведения</th>
+                      <th>Действия</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -268,13 +249,13 @@ function AdminPage() {
                             className="btn-small"
                             onClick={() => setEditingEvent(event)}
                           >
-                            Edit
+                            Редактировать
                           </button>
                           <button
                             className="btn-danger btn-small"
                             onClick={() => handleDeleteEvent(event.id)}
                           >
-                            Delete
+                            Удалить
                           </button>
                         </td>
                       </tr>
@@ -282,7 +263,7 @@ function AdminPage() {
                     {category.events.length === 0 && (
                       <tr>
                         <td colSpan={6} className="empty-row">
-                          No events in this category
+                          Нет мероприятий в этой категории
                         </td>
                       </tr>
                     )}
@@ -293,7 +274,7 @@ function AdminPage() {
 
             {categories.length === 0 && (
               <div className="empty-state">
-                <p>No categories yet. Start by adding a category.</p>
+                <p>Нет категорий. Начните с добавления категории.</p>
               </div>
             )}
           </div>
@@ -320,10 +301,10 @@ function AdminPage() {
       {showAddEvent && (
         <div className="modal-overlay" onClick={() => setShowAddEvent(false)}>
           <div className="modal" onClick={e => e.stopPropagation()}>
-            <h2>Add New Event</h2>
+            <h2>Добавить новое мероприятие</h2>
             <form onSubmit={handleAddEvent}>
               <div className="form-group">
-                <label htmlFor="add-category">Category</label>
+                <label htmlFor="add-category">Категория</label>
                 <select
                   id="add-category"
                   value={newEvent.category_id}
@@ -339,18 +320,18 @@ function AdminPage() {
               </div>
 
               <div className="form-group">
-                <label htmlFor="add-number">Number</label>
+                <label htmlFor="add-number">№ п/п</label>
                 <input
                   id="add-number"
                   type="text"
                   value={newEvent.number}
                   onChange={e => setNewEvent(prev => ({ ...prev, number: e.target.value }))}
-                  placeholder="e.g. 1.1"
+                  placeholder="например, 1.1"
                 />
               </div>
 
               <div className="form-group">
-                <label htmlFor="add-name">Name *</label>
+                <label htmlFor="add-name">Название *</label>
                 <input
                   id="add-name"
                   type="text"
@@ -361,18 +342,18 @@ function AdminPage() {
               </div>
 
               <div className="form-group">
-                <label htmlFor="add-date">Date</label>
+                <label htmlFor="add-date">Дата</label>
                 <input
                   id="add-date"
                   type="text"
                   value={newEvent.event_date}
                   onChange={e => setNewEvent(prev => ({ ...prev, event_date: e.target.value }))}
-                  placeholder="e.g. 15-20 September"
+                  placeholder="например, 15-20 сентября"
                 />
               </div>
 
               <div className="form-group">
-                <label htmlFor="add-responsible">Responsible</label>
+                <label htmlFor="add-responsible">Ответственные</label>
                 <input
                   id="add-responsible"
                   type="text"
@@ -382,7 +363,7 @@ function AdminPage() {
               </div>
 
               <div className="form-group">
-                <label htmlFor="add-location">Location</label>
+                <label htmlFor="add-location">Место проведения</label>
                 <input
                   id="add-location"
                   type="text"
@@ -392,7 +373,7 @@ function AdminPage() {
               </div>
 
               <div className="form-group">
-                <label htmlFor="add-description">Description</label>
+                <label htmlFor="add-description">Пояснение</label>
                 <textarea
                   id="add-description"
                   value={newEvent.description}
@@ -403,10 +384,10 @@ function AdminPage() {
 
               <div className="modal-actions">
                 <button type="button" className="btn-secondary" onClick={() => setShowAddEvent(false)}>
-                  Cancel
+                  Отмена
                 </button>
                 <button type="submit" className="btn-primary">
-                  Add Event
+                  Добавить мероприятие
                 </button>
               </div>
             </form>
@@ -418,10 +399,10 @@ function AdminPage() {
       {showAddCategory && (
         <div className="modal-overlay" onClick={() => setShowAddCategory(false)}>
           <div className="modal" onClick={e => e.stopPropagation()}>
-            <h2>Add New Category</h2>
+            <h2>Добавить новую категорию</h2>
             <form onSubmit={handleAddCategory}>
               <div className="form-group">
-                <label htmlFor="cat-name">Category Name *</label>
+                <label htmlFor="cat-name">Название категории *</label>
                 <input
                   id="cat-name"
                   type="text"
@@ -432,7 +413,7 @@ function AdminPage() {
               </div>
 
               <div className="form-group">
-                <label htmlFor="cat-month">Month *</label>
+                <label htmlFor="cat-month">Месяц *</label>
                 <select
                   id="cat-month"
                   value={newCategory.month}
@@ -448,7 +429,7 @@ function AdminPage() {
               </div>
 
               <div className="form-group">
-                <label htmlFor="cat-sort">Sort Order</label>
+                <label htmlFor="cat-sort">Порядок сортировки</label>
                 <input
                   id="cat-sort"
                   type="number"
@@ -459,10 +440,10 @@ function AdminPage() {
 
               <div className="modal-actions">
                 <button type="button" className="btn-secondary" onClick={() => setShowAddCategory(false)}>
-                  Cancel
+                  Отмена
                 </button>
                 <button type="submit" className="btn-primary">
-                  Add Category
+                  Добавить категорию
                 </button>
               </div>
             </form>

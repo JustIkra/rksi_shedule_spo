@@ -4,8 +4,9 @@ import { photosApi } from '../api/photos';
 interface UploadProgress {
   filename: string;
   progress: number;
-  status: 'uploading' | 'success' | 'error';
+  status: 'uploading' | 'success' | 'error' | 'retrying';
   error?: string;
+  retryAttempt?: number;
 }
 
 interface PhotoUploaderProps {
@@ -14,7 +15,37 @@ interface PhotoUploaderProps {
 }
 
 const ALLOWED_TYPES = ['image/jpeg', 'image/png'];
-const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+const MAX_RETRY_ATTEMPTS = 3;
+const RETRY_DELAY_MS = 1500; // 1.5 seconds between retries
+
+// Helper to detect network errors
+const isNetworkError = (error: unknown): boolean => {
+  if (!error) return false;
+
+  // Axios network error
+  if (typeof error === 'object' && 'code' in error) {
+    const code = (error as { code?: string }).code;
+    if (code === 'ERR_NETWORK' || code === 'ECONNABORTED' || code === 'ETIMEDOUT') {
+      return true;
+    }
+  }
+
+  // Generic network error detection
+  if (error instanceof Error) {
+    const message = error.message.toLowerCase();
+    return (
+      message.includes('network') ||
+      message.includes('timeout') ||
+      message.includes('connection') ||
+      message.includes('fetch')
+    );
+  }
+
+  return false;
+};
+
+// Helper to wait for a specified delay
+const delay = (ms: number): Promise<void> => new Promise((resolve) => setTimeout(resolve, ms));
 
 const PhotoUploader: React.FC<PhotoUploaderProps> = ({
   eventId,
@@ -32,8 +63,6 @@ const PhotoUploader: React.FC<PhotoUploaderProps> = ({
     Array.from(files).forEach((file) => {
       if (!ALLOWED_TYPES.includes(file.type)) {
         errors.push(`${file.name}: неверный формат (только JPEG и PNG)`);
-      } else if (file.size > MAX_FILE_SIZE) {
-        errors.push(`${file.name}: файл слишком большой (макс. 10MB)`);
       } else {
         valid.push(file);
       }
@@ -74,65 +103,112 @@ const PhotoUploader: React.FC<PhotoUploaderProps> = ({
       setUploads([...errorUploads, ...uploadProgress]);
       setIsUploading(true);
 
-      try {
-        const response = await photosApi.upload(eventId, validFileList, (percent) => {
-          // Update progress for all uploading files
+      let attempt = 1;
+      let lastError: unknown = null;
+
+      while (attempt <= MAX_RETRY_ATTEMPTS) {
+        try {
+          // Update status to show retry attempt (for attempts > 1)
+          if (attempt > 1) {
+            setUploads((prev) =>
+              prev.map((upload) => {
+                if (upload.status === 'uploading' || upload.status === 'retrying') {
+                  return {
+                    ...upload,
+                    status: 'retrying' as const,
+                    progress: 0,
+                    retryAttempt: attempt,
+                  };
+                }
+                return upload;
+              })
+            );
+          }
+
+          const response = await photosApi.upload(eventId, validFileList, (percent) => {
+            // Update progress for all uploading/retrying files
+            setUploads((prev) =>
+              prev.map((upload) => {
+                if (upload.status === 'uploading' || upload.status === 'retrying') {
+                  return { ...upload, progress: percent };
+                }
+                return upload;
+              })
+            );
+          });
+
+          // Update progress to success
           setUploads((prev) =>
             prev.map((upload) => {
-              if (upload.status === 'uploading') {
-                return { ...upload, progress: percent };
+              if (upload.status === 'uploading' || upload.status === 'retrying') {
+                return {
+                  ...upload,
+                  progress: 100,
+                  status: 'success' as const,
+                  retryAttempt: undefined,
+                };
               }
               return upload;
             })
           );
-        });
 
-        // Update progress to success
-        setUploads((prev) =>
-          prev.map((upload) => {
-            if (upload.status === 'uploading') {
-              return { ...upload, progress: 100, status: 'success' as const };
-            }
-            return upload;
-          })
-        );
-
-        // Handle server-side errors
-        if (response.data.errors && response.data.errors.length > 0) {
-          setUploads((prev) => [
-            ...prev,
-            ...response.data.errors.map((error) => ({
-              filename: 'Server error',
-              progress: 0,
-              status: 'error' as const,
-              error,
-            })),
-          ]);
-        }
-
-        // Notify parent
-        onUploadComplete();
-
-        // Clear success uploads after delay
-        setTimeout(() => {
-          setUploads((prev) => prev.filter((u) => u.status === 'error'));
-        }, 3000);
-      } catch (error) {
-        setUploads((prev) =>
-          prev.map((upload) => {
-            if (upload.status === 'uploading') {
-              return {
-                ...upload,
+          // Handle server-side errors
+          if (response.data.errors && response.data.errors.length > 0) {
+            setUploads((prev) => [
+              ...prev,
+              ...response.data.errors.map((err) => ({
+                filename: 'Server error',
+                progress: 0,
                 status: 'error' as const,
-                error: 'Ошибка загрузки',
-              };
-            }
-            return upload;
-          })
-        );
-      } finally {
-        setIsUploading(false);
+                error: err,
+              })),
+            ]);
+          }
+
+          // Notify parent
+          onUploadComplete();
+
+          // Clear success uploads after delay
+          setTimeout(() => {
+            setUploads((prev) => prev.filter((u) => u.status === 'error'));
+          }, 3000);
+
+          // Upload succeeded, exit the retry loop
+          setIsUploading(false);
+          return;
+        } catch (err) {
+          lastError = err;
+
+          // Check if it's a network error and we have retries left
+          if (isNetworkError(err) && attempt < MAX_RETRY_ATTEMPTS) {
+            attempt++;
+            // Wait before retrying
+            await delay(RETRY_DELAY_MS);
+            continue;
+          }
+
+          // Not a network error or no retries left - fail immediately
+          break;
+        }
       }
+
+      // All retries exhausted or non-network error
+      setUploads((prev) =>
+        prev.map((upload) => {
+          if (upload.status === 'uploading' || upload.status === 'retrying') {
+            return {
+              ...upload,
+              status: 'error' as const,
+              retryAttempt: undefined,
+              error: isNetworkError(lastError)
+                ? 'Ошибка сети. Попробуйте позже.'
+                : 'Ошибка загрузки',
+            };
+          }
+          return upload;
+        })
+      );
+      setIsUploading(false);
     },
     [eventId, onUploadComplete]
   );
@@ -215,7 +291,7 @@ const PhotoUploader: React.FC<PhotoUploaderProps> = ({
               ? 'Загрузка...'
               : 'Перетащите файлы или нажмите для выбора'}
           </p>
-          <p className="photo-uploader-hint">JPEG или PNG, до 10MB</p>
+          <p className="photo-uploader-hint">JPEG или PNG</p>
         </div>
       </div>
 
@@ -231,6 +307,19 @@ const PhotoUploader: React.FC<PhotoUploaderProps> = ({
                     style={{ width: `${upload.progress}%` }}
                   />
                 </div>
+              )}
+              {upload.status === 'retrying' && (
+                <>
+                  <span className="upload-progress-status retrying">
+                    Повторная попытка ({upload.retryAttempt}/{MAX_RETRY_ATTEMPTS})...
+                  </span>
+                  <div className="upload-progress-bar">
+                    <div
+                      className="upload-progress-fill retrying"
+                      style={{ width: `${upload.progress}%` }}
+                    />
+                  </div>
+                </>
               )}
               {upload.status === 'success' && (
                 <span className="upload-progress-status success">Загружено</span>

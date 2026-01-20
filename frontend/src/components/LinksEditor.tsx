@@ -15,7 +15,6 @@ const LinksEditor: React.FC<LinksEditorProps> = ({
   onUpdate,
 }) => {
   const [url, setUrl] = useState('');
-  const [title, setTitle] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<Link | null>(null);
@@ -48,10 +47,8 @@ const LinksEditor: React.FC<LinksEditorProps> = ({
     try {
       await linksApi.create(eventId, {
         url: url.trim(),
-        title: title.trim() || undefined,
       });
       setUrl('');
-      setTitle('');
       onUpdate();
     } catch (err) {
       setError('Ошибка при добавлении ссылки');
@@ -96,7 +93,7 @@ const LinksEditor: React.FC<LinksEditorProps> = ({
                 rel="noopener noreferrer"
                 className="links-list-link"
               >
-                {link.title || link.url}
+                {link.url}
               </a>
               <button
                 className="links-list-delete"
@@ -133,14 +130,6 @@ const LinksEditor: React.FC<LinksEditorProps> = ({
             onChange={(e) => setUrl(e.target.value)}
             disabled={isSubmitting}
           />
-          <input
-            type="text"
-            className="links-form-input links-form-title"
-            placeholder="Название (опционально)"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            disabled={isSubmitting}
-          />
         </div>
         {error && <p className="links-form-error">{error}</p>}
         <button
@@ -155,7 +144,7 @@ const LinksEditor: React.FC<LinksEditorProps> = ({
       <ConfirmDialog
         isOpen={deleteTarget !== null}
         title="Удалить ссылку?"
-        message={`Вы уверены, что хотите удалить ссылку "${deleteTarget?.title || deleteTarget?.url}"?`}
+        message={`Вы уверены, что хотите удалить ссылку "${deleteTarget?.url}"?`}
         onConfirm={handleConfirmDelete}
         onCancel={handleCancelDelete}
       />

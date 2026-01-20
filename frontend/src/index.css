@@ -115,6 +115,14 @@ body {
   color: #f44336;
 }
 
+.upload-progress-status.retrying {
+  color: #ff9800;
+}
+
+.upload-progress-fill.retrying {
+  background: #ff9800;
+}
+
 /* Photo Grid */
 .photo-grid {
   display: grid;

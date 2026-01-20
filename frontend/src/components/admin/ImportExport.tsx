@@ -33,7 +33,7 @@ function ImportExport({ onImportSuccess }: ImportExportProps) {
     try {
       const response = await adminApi.importExcel(selectedFile);
       setSuccess(
-        `Import successful: ${response.data.imported_categories} categories, ${response.data.imported_events} events`
+        `Импорт выполнен успешно: ${response.data.imported_categories} категорий, ${response.data.imported_events} мероприятий`
       );
       onImportSuccess();
       setSelectedFile(null);
@@ -41,7 +41,7 @@ function ImportExport({ onImportSuccess }: ImportExportProps) {
         fileInputRef.current.value = '';
       }
     } catch (err) {
-      setError('Failed to import file. Please check the format.');
+      setError('Не удалось импортировать файл. Пожалуйста, проверьте формат.');
       console.error(err);
     } finally {
       setImporting(false);
@@ -66,7 +66,7 @@ function ImportExport({ onImportSuccess }: ImportExportProps) {
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
     } catch (err) {
-      setError('Failed to export data');
+      setError('Не удалось экспортировать данные');
       console.error(err);
     } finally {
       setExporting(false);
@@ -83,15 +83,15 @@ function ImportExport({ onImportSuccess }: ImportExportProps) {
 
   return (
     <div className="import-export-panel">
-      <h3>Import / Export</h3>
+      <h3>Импорт / Экспорт</h3>
 
       {error && <div className="error-message">{error}</div>}
       {success && <div className="success-message">{success}</div>}
 
       <div className="import-section">
-        <h4>Import from Excel</h4>
+        <h4>Импорт из Excel</h4>
         <p className="warning-text">
-          Warning: Importing will replace all existing events and categories!
+          Внимание: Импорт заменит все существующие мероприятия и категории!
         </p>
         <input
           ref={fileInputRef}
@@ -105,26 +105,26 @@ function ImportExport({ onImportSuccess }: ImportExportProps) {
       {showConfirm && (
         <div className="confirm-dialog">
           <p>
-            Are you sure you want to import "{selectedFile?.name}"?
+            Вы уверены, что хотите импортировать "{selectedFile?.name}"?
             <br />
-            <strong>This will delete all existing data!</strong>
+            <strong>Это удалит все существующие данные!</strong>
           </p>
           <div className="confirm-actions">
             <button className="btn-secondary" onClick={cancelImport}>
-              Cancel
+              Отмена
             </button>
             <button className="btn-danger" onClick={handleImport} disabled={importing}>
-              {importing ? 'Importing...' : 'Yes, Import'}
+              {importing ? 'Импорт...' : 'Да, импортировать'}
             </button>
           </div>
         </div>
       )}
 
       <div className="export-section">
-        <h4>Export to Excel</h4>
-        <p>Download all events and categories as an Excel file.</p>
+        <h4>Экспорт в Excel</h4>
+        <p>Скачать все мероприятия и категории в виде файла Excel.</p>
         <button className="btn-primary" onClick={handleExport} disabled={exporting}>
-          {exporting ? 'Exporting...' : 'Export Excel'}
+          {exporting ? 'Экспорт...' : 'Экспорт Excel'}
         </button>
       </div>
     </div>
