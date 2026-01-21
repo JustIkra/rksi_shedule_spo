@@ -3,10 +3,10 @@ import { EventWithRelations, Link, Photo } from '../api/types';
 import EditableDescription from './EditableDescription';
 import Lightbox from './Lightbox';
 import ConfirmDialog from './ConfirmDialog';
+import '../styles/components/EventRow.css';
 
 interface EventRowProps {
   event: EventWithRelations;
-  index: number;
   onUpdateDescription: (eventId: number, description: string | null) => Promise<void>;
   onAddLink: (eventId: number, url: string, title: string) => Promise<void>;
   onDeleteLink: (eventId: number, linkId: number) => Promise<void>;
@@ -15,10 +15,8 @@ interface EventRowProps {
   canEdit: boolean;
 }
 
-// Мемоизируем компонент для предотвращения лишних ре-рендеров (rerender-memo)
 const EventRow: FC<EventRowProps> = memo(({
   event,
-  index,
   onUpdateDescription,
   onAddLink,
   onDeleteLink,
@@ -32,10 +30,8 @@ const EventRow: FC<EventRowProps> = memo(({
   const [addingLink, setAddingLink] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Lightbox state
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
-  // Delete confirmation state
   const [deletePhotoTarget, setDeletePhotoTarget] = useState<Photo | null>(null);
   const [deleteLinkTarget, setDeleteLinkTarget] = useState<Link | null>(null);
 
@@ -66,31 +62,29 @@ const EventRow: FC<EventRowProps> = memo(({
       console.error('Failed to upload photo:', error);
     }
 
-    // Сбрасываем input
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
   };
 
   return (
-    <tr className="event-row">
-      {/* N п/п */}
-      <td className="cell-number">{event.number || index + 1}</td>
+    <tr className="events-table__row">
+      {/* Name - Always visible */}
+      <td className="events-table__cell events-table__cell--name">{event.name}</td>
 
-      {/* Наименование */}
-      <td className="cell-name">{event.name}</td>
+      {/* Date - Always visible */}
+      <td className="events-table__cell events-table__cell--date">{event.event_date || '-'}</td>
 
-      {/* Дата */}
-      <td className="cell-date">{event.event_date || '-'}</td>
+      {/* Responsible - Always visible */}
+      <td className="events-table__cell events-table__cell--responsible">{event.responsible || '-'}</td>
 
-      {/* Ответственные */}
-      <td className="cell-responsible">{event.responsible || '-'}</td>
+      {/* Location - lg+ only (>=992px) */}
+      <td className="events-table__cell events-table__cell--location hide-below-lg">
+        {event.location || '-'}
+      </td>
 
-      {/* Место */}
-      <td className="cell-location">{event.location || '-'}</td>
-
-      {/* Пояснение */}
-      <td className="cell-description">
+      {/* Description - xl only (>=1200px) */}
+      <td className="events-table__cell events-table__cell--description hide-below-xl">
         {canEdit ? (
           <EditableDescription
             value={event.description}
@@ -102,19 +96,20 @@ const EventRow: FC<EventRowProps> = memo(({
         )}
       </td>
 
-      {/* Ссылки */}
-      <td className="cell-links">
-        <div className="links-container">
+      {/* Links - lg+ only (>=992px) */}
+      <td className="events-table__cell events-table__cell--links hide-below-lg">
+        <div className="event-row__links">
           {event.links.map((link: Link) => (
-            <div key={link.id} className="link-item">
+            <div key={link.id} className="event-row__link">
               <a href={link.url} target="_blank" rel="noopener noreferrer" title={link.url}>
                 {link.title || 'Ссылка'}
               </a>
               {canEdit && (
                 <button
-                  className="btn-delete-link"
+                  className="event-row__link-delete"
                   onClick={() => setDeleteLinkTarget(link)}
                   title="Удалить ссылку"
+                  aria-label="Удалить ссылку"
                 >
                   x
                 </button>
@@ -123,64 +118,33 @@ const EventRow: FC<EventRowProps> = memo(({
           ))}
 
           {canEdit && (
-            <div className="link-form-wrapper">
-              <button
-                className="btn-add-link"
-                onClick={() => setShowLinkForm(true)}
-              >
-                + Добавить
-              </button>
-              {showLinkForm && (
-                <>
-                  <div className="link-form-overlay" onClick={() => setShowLinkForm(false)} />
-                  <form className="link-form" onSubmit={handleAddLink}>
-                    <div className="link-form-title">Добавить ссылку</div>
-                    <input
-                      type="url"
-                      placeholder="https://example.com"
-                      value={newLinkUrl}
-                      onChange={(e) => setNewLinkUrl(e.target.value)}
-                      required
-                      autoFocus
-                    />
-                    <input
-                      type="text"
-                      placeholder="Название (необязательно)"
-                      value={newLinkTitle}
-                      onChange={(e) => setNewLinkTitle(e.target.value)}
-                    />
-                    <div className="link-form-buttons">
-                      <button type="button" onClick={() => setShowLinkForm(false)}>
-                        Отмена
-                      </button>
-                      <button type="submit" disabled={addingLink}>
-                        {addingLink ? '...' : 'Добавить'}
-                      </button>
-                    </div>
-                  </form>
-                </>
-              )}
-            </div>
+            <button
+              className="event-row__link-add"
+              onClick={() => setShowLinkForm(true)}
+            >
+              + Добавить
+            </button>
           )}
         </div>
       </td>
 
-      {/* Фото */}
-      <td className="cell-photos">
-        <div className="photos-container">
+      {/* Photos - Always visible */}
+      <td className="events-table__cell events-table__cell--photos">
+        <div className="event-row__photos">
           {event.photos.map((photo, photoIndex) => (
-            <div key={photo.id} className="photo-item">
+            <div key={photo.id} className="event-row__photo">
               <img
                 src={`/uploads/${photo.thumbnail_path}`}
                 alt="Фото"
-                className="photo-thumbnail"
+                className="event-row__photo-thumb"
                 onClick={() => setLightboxIndex(photoIndex)}
               />
               {canEdit && (
                 <button
-                  className="btn-delete-photo"
+                  className="event-row__photo-delete"
                   onClick={() => setDeletePhotoTarget(photo)}
                   title="Удалить фото"
+                  aria-label="Удалить фото"
                 >
                   x
                 </button>
@@ -198,9 +162,10 @@ const EventRow: FC<EventRowProps> = memo(({
                 style={{ display: 'none' }}
               />
               <button
-                className="btn-add-photo"
+                className="event-row__photo-add"
                 onClick={() => fileInputRef.current?.click()}
                 title="Загрузить фото"
+                aria-label="Загрузить фото"
               >
                 +
               </button>
@@ -209,7 +174,6 @@ const EventRow: FC<EventRowProps> = memo(({
         </div>
       </td>
 
-      {/* Lightbox для просмотра фото */}
       {lightboxIndex !== null && event.photos.length > 0 && (
         <Lightbox
           photos={event.photos}
@@ -219,7 +183,6 @@ const EventRow: FC<EventRowProps> = memo(({
         />
       )}
 
-      {/* Диалог подтверждения удаления фото */}
       <ConfirmDialog
         isOpen={deletePhotoTarget !== null}
         title="Удалить фото?"
@@ -233,7 +196,6 @@ const EventRow: FC<EventRowProps> = memo(({
         onCancel={() => setDeletePhotoTarget(null)}
       />
 
-      {/* Диалог подтверждения удаления ссылки */}
       <ConfirmDialog
         isOpen={deleteLinkTarget !== null}
         title="Удалить ссылку?"
@@ -246,6 +208,61 @@ const EventRow: FC<EventRowProps> = memo(({
         }}
         onCancel={() => setDeleteLinkTarget(null)}
       />
+
+      {/* Modal for adding links */}
+      {showLinkForm && (
+        <div className="link-modal-overlay" onClick={() => setShowLinkForm(false)}>
+          <div className="link-modal" onClick={(e) => e.stopPropagation()}>
+            <h3 className="link-modal__title">Добавить ссылку</h3>
+            <form onSubmit={handleAddLink}>
+              <div className="link-modal__field">
+                <label className="link-modal__label" htmlFor={`link-url-${event.id}`}>
+                  URL ссылки
+                </label>
+                <input
+                  id={`link-url-${event.id}`}
+                  type="url"
+                  className="link-modal__input"
+                  placeholder="https://example.com"
+                  value={newLinkUrl}
+                  onChange={(e) => setNewLinkUrl(e.target.value)}
+                  required
+                  autoFocus
+                />
+              </div>
+              <div className="link-modal__field">
+                <label className="link-modal__label" htmlFor={`link-title-${event.id}`}>
+                  Название (необязательно)
+                </label>
+                <input
+                  id={`link-title-${event.id}`}
+                  type="text"
+                  className="link-modal__input"
+                  placeholder="Название ссылки"
+                  value={newLinkTitle}
+                  onChange={(e) => setNewLinkTitle(e.target.value)}
+                />
+              </div>
+              <div className="link-modal__actions">
+                <button
+                  type="button"
+                  className="link-modal__btn link-modal__btn--cancel"
+                  onClick={() => setShowLinkForm(false)}
+                >
+                  Отмена
+                </button>
+                <button
+                  type="submit"
+                  className="link-modal__btn link-modal__btn--submit"
+                  disabled={addingLink}
+                >
+                  {addingLink ? 'Добавление...' : 'Добавить'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </tr>
   );
 });

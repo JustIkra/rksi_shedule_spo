@@ -1,0 +1,104 @@
+/**
+ * ConfirmDialog Component Styles
+ *
+ * Centered modal dialog using unified grid system.
+ */
+
+.confirm-dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: var(--space-4);
+}
+
+.confirm-dialog {
+  background-color: var(--color-paper);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xl);
+  width: 100%;
+  max-width: 400px;
+  padding: var(--space-6);
+  animation: confirmDialogFadeIn 0.2s var(--ease-out);
+}
+
+@keyframes confirmDialogFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.confirm-dialog-title {
+  font-family: var(--font-display);
+  font-size: var(--text-md);
+  font-weight: 600;
+  color: var(--color-ink);
+  margin: 0 0 var(--space-2) 0;
+}
+
+.confirm-dialog-message {
+  font-size: var(--text-sm);
+  color: var(--color-ink-secondary);
+  margin: 0 0 var(--space-5) 0;
+  line-height: var(--leading-relaxed);
+}
+
+.confirm-dialog-actions {
+  display: flex;
+  gap: var(--space-3);
+  justify-content: flex-end;
+}
+
+.confirm-dialog-btn {
+  padding: var(--space-3) var(--space-5);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  min-height: var(--touch-target);
+}
+
+.confirm-dialog-btn-cancel {
+  background-color: var(--color-paper);
+  border-color: var(--color-rule);
+  color: var(--color-ink-secondary);
+}
+
+.confirm-dialog-btn-cancel:hover {
+  background-color: var(--color-paper-muted);
+  border-color: var(--color-ink-muted);
+}
+
+.confirm-dialog-btn-confirm {
+  background-color: var(--color-error);
+  border-color: var(--color-error);
+  color: var(--color-paper);
+}
+
+.confirm-dialog-btn-confirm:hover {
+  background-color: #a02828;
+  border-color: #a02828;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .confirm-dialog {
+    animation: none;
+  }
+
+  .confirm-dialog-btn {
+    transition: none;
+  }
+}

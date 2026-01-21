@@ -1,0 +1,202 @@
+/**
+ * Design System Variables
+ *
+ * Editorial/Magazine aesthetic with refined typography,
+ * generous whitespace, and a cohesive grid system.
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Source+Sans+3:wght@400;500;600&display=swap');
+
+:root {
+  /* ===========================================
+     TYPOGRAPHY
+     =========================================== */
+  --font-display: 'Playfair Display', Georgia, 'Times New Roman', serif;
+  --font-body: 'Source Sans 3', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+  /* Type Scale - optimized for readability */
+  --text-xs: 0.75rem;    /* 12px - minimum readable */
+  --text-sm: 0.875rem;   /* 14px - comfortable small */
+  --text-base: 1rem;     /* 16px */
+  --text-md: 1.125rem;   /* 18px */
+  --text-lg: 1.375rem;   /* 22px */
+  --text-xl: 1.75rem;    /* 28px */
+  --text-2xl: 2.25rem;   /* 36px */
+  --text-3xl: 3rem;      /* 48px */
+
+  /* Line heights - optimized for readability */
+  --leading-tight: 1.2;
+  --leading-snug: 1.35;
+  --leading-normal: 1.6;
+  --leading-relaxed: 1.75;
+
+  /* Letter spacing */
+  --tracking-tight: -0.025em;
+  --tracking-normal: 0;
+  --tracking-wide: 0.025em;
+  --tracking-wider: 0.05em;
+  --tracking-caps: 0.1em;
+
+  /* ===========================================
+     COLORS - Refined, muted palette
+     =========================================== */
+  /* Primary - Deep ocean blue */
+  --color-primary: #1e3a5f;
+  --color-primary-dark: #0f2744;
+  --color-primary-light: #2d5a8a;
+  --color-primary-muted: rgba(30, 58, 95, 0.08);
+
+  /* Accent - Warm terracotta */
+  --color-accent: #c7694f;
+  --color-accent-light: #e8957a;
+
+  /* Neutrals - Warm grays */
+  --color-ink: #1a1a1a;
+  --color-ink-secondary: #4a4a4a;
+  --color-ink-muted: #8a8a8a;
+  --color-ink-faint: #b5b5b5;
+
+  /* Surfaces */
+  --color-paper: #fefefe;
+  --color-paper-warm: #faf8f5;
+  --color-paper-muted: #f5f3f0;
+  --color-paper-dark: #eae6e1;
+
+  /* Borders */
+  --color-rule: #e0dcd7;
+  --color-rule-light: #ebe8e4;
+
+  /* Semantic */
+  --color-error: #b83b3b;
+  --color-error-bg: #fef2f2;
+  --color-success: #2d6a4f;
+  --color-success-bg: #f0fdf4;
+  --color-warning: #b45309;
+  --color-warning-bg: #fffbeb;
+
+  /* Legacy mappings */
+  --color-text: var(--color-ink);
+  --color-text-secondary: var(--color-ink-secondary);
+  --color-text-muted: var(--color-ink-muted);
+  --color-bg: var(--color-paper);
+  --color-bg-secondary: var(--color-paper-muted);
+  --color-border: var(--color-rule);
+  --color-danger: var(--color-error);
+
+  /* ===========================================
+     SPACING - 8px base with refined scale
+     =========================================== */
+  --space-1: 0.25rem;   /* 4px */
+  --space-2: 0.5rem;    /* 8px */
+  --space-3: 0.75rem;   /* 12px */
+  --space-4: 1rem;      /* 16px */
+  --space-5: 1.5rem;    /* 24px */
+  --space-6: 2rem;      /* 32px */
+  --space-8: 3rem;      /* 48px */
+  --space-10: 4rem;     /* 64px */
+  --space-12: 6rem;     /* 96px */
+  --space-16: 8rem;     /* 128px */
+
+  /* Legacy mappings */
+  --spacing-xs: var(--space-1);
+  --spacing-sm: var(--space-2);
+  --spacing-md: var(--space-4);
+  --spacing-lg: var(--space-5);
+  --spacing-xl: var(--space-6);
+
+  /* ===========================================
+     GRID SYSTEM
+     =========================================== */
+  /* Container */
+  --container-max: 1400px;
+  --container-narrow: 960px;
+  --container-wide: 1600px;
+
+  /* Padding - responsive via media queries */
+  --container-gutter: var(--space-4);
+
+  /* Grid */
+  --grid-columns: 12;
+  --grid-gap: var(--space-5);
+  --grid-gap-sm: var(--space-4);
+
+  /* Content widths */
+  --content-width: 720px;
+  --sidebar-width: 280px;
+
+  /* ===========================================
+     EFFECTS
+     =========================================== */
+  /* Shadows - subtle, editorial */
+  --shadow-xs: 0 1px 2px rgba(26, 26, 26, 0.04);
+  --shadow-sm: 0 2px 8px rgba(26, 26, 26, 0.06);
+  --shadow-md: 0 4px 16px rgba(26, 26, 26, 0.08);
+  --shadow-lg: 0 8px 32px rgba(26, 26, 26, 0.1);
+  --shadow-xl: 0 16px 48px rgba(26, 26, 26, 0.12);
+
+  /* Elevation for cards */
+  --shadow-card: 0 1px 3px rgba(26, 26, 26, 0.05), 0 4px 12px rgba(26, 26, 26, 0.04);
+  --shadow-card-hover: 0 4px 12px rgba(26, 26, 26, 0.08), 0 8px 24px rgba(26, 26, 26, 0.06);
+
+  /* Radius - subtle, refined */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 10px;
+  --radius-xl: 16px;
+  --radius-full: 9999px;
+
+  /* Transitions */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --duration-fast: 150ms;
+  --duration-normal: 250ms;
+  --duration-slow: 400ms;
+
+  /* Legacy mappings */
+  --transition-fast: var(--duration-fast) var(--ease-out);
+  --transition-normal: var(--duration-normal) var(--ease-out);
+  --transition-slow: var(--duration-slow) var(--ease-out);
+
+  /* Interactive */
+  --touch-target: 44px;
+  --focus-ring: 0 0 0 2px var(--color-paper), 0 0 0 4px var(--color-primary);
+
+  /* Legacy */
+  --touch-target-min: var(--touch-target);
+  --gutter: var(--grid-gap);
+  --container-padding: var(--container-gutter);
+
+  /* Font family legacy */
+  --font-family: var(--font-body);
+  --font-size-xs: var(--text-xs);
+  --font-size-sm: var(--text-sm);
+  --font-size-md: var(--text-base);
+  --font-size-lg: var(--text-md);
+  --font-size-xl: var(--text-lg);
+}
+
+/* ===========================================
+   RESPONSIVE ADJUSTMENTS
+   =========================================== */
+
+/* Tablet (768px+) */
+@media (min-width: 768px) {
+  :root {
+    --container-gutter: var(--space-6);
+    --grid-gap: var(--space-6);
+  }
+}
+
+/* Desktop (1024px+) */
+@media (min-width: 1024px) {
+  :root {
+    --container-gutter: var(--space-8);
+  }
+}
+
+/* Large Desktop (1400px+) */
+@media (min-width: 1400px) {
+  :root {
+    --container-gutter: var(--space-10);
+  }
+}

@@ -1,5 +1,6 @@
 import React, { useEffect, useCallback } from 'react';
 import { Photo } from '../api/types';
+import '../styles/components/Lightbox.css';
 
 interface LightboxProps {
   photos: Photo[];
@@ -57,7 +58,7 @@ const Lightbox: React.FC<LightboxProps> = ({
     };
   }, [handleKeyDown]);
 
-  const handleBackdropClick = (e: React.MouseEvent) => {
+  const handleOverlayClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
       onClose();
     }
@@ -75,91 +76,106 @@ const Lightbox: React.FC<LightboxProps> = ({
   if (!currentPhoto) return null;
 
   return (
-    <div className="lightbox" onClick={handleBackdropClick}>
-      {/* Close button */}
-      <button className="lightbox-close" onClick={onClose} title="Закрыть (Esc)">
-        <svg
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-        >
-          <line x1="18" y1="6" x2="6" y2="18" />
-          <line x1="6" y1="6" x2="18" y2="18" />
-        </svg>
-      </button>
-
-      {/* Download button */}
-      <button
-        className="lightbox-download"
-        onClick={handleDownload}
-        title="Скачать оригинал"
-      >
-        <svg
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-        >
-          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-          <polyline points="7 10 12 15 17 10" />
-          <line x1="12" y1="15" x2="12" y2="3" />
-        </svg>
-      </button>
-
-      {/* Navigation arrows */}
-      {hasPrev && (
+    <div className="lightbox" role="dialog" aria-modal="true" aria-label="Image viewer">
+      <div className="lightbox__overlay" onClick={handleOverlayClick}>
+        {/* Close button */}
         <button
-          className="lightbox-nav lightbox-prev"
-          onClick={handlePrev}
-          title="Предыдущее (←)"
+          className="lightbox__close"
+          onClick={onClose}
+          title="Close (Esc)"
+          aria-label="Close lightbox"
         >
           <svg
-            width="32"
-            height="32"
+            width="24"
+            height="24"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
             strokeWidth="2"
+            aria-hidden="true"
           >
-            <polyline points="15 18 9 12 15 6" />
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
           </svg>
         </button>
-      )}
 
-      {hasNext && (
+        {/* Download button */}
         <button
-          className="lightbox-nav lightbox-next"
-          onClick={handleNext}
-          title="Следующее (→)"
+          className="lightbox__download"
+          onClick={handleDownload}
+          title="Download original"
+          aria-label="Download original image"
         >
           <svg
-            width="32"
-            height="32"
+            width="24"
+            height="24"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
             strokeWidth="2"
+            aria-hidden="true"
           >
-            <polyline points="9 18 15 12 9 6" />
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <polyline points="7 10 12 15 17 10" />
+            <line x1="12" y1="15" x2="12" y2="3" />
           </svg>
         </button>
-      )}
 
-      {/* Image */}
-      <img
-        src={`/uploads/${currentPhoto.original_path}`}
-        alt={currentPhoto.filename}
-        className="lightbox-image"
-      />
+        {/* Previous navigation */}
+        {hasPrev && (
+          <button
+            className="lightbox__nav lightbox__nav--prev"
+            onClick={handlePrev}
+            title="Previous (Left arrow)"
+            aria-label="Previous image"
+          >
+            <svg
+              width="32"
+              height="32"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              aria-hidden="true"
+            >
+              <polyline points="15 18 9 12 15 6" />
+            </svg>
+          </button>
+        )}
 
-      {/* Counter */}
-      <div className="lightbox-counter">
-        {currentIndex + 1} / {photos.length}
+        {/* Next navigation */}
+        {hasNext && (
+          <button
+            className="lightbox__nav lightbox__nav--next"
+            onClick={handleNext}
+            title="Next (Right arrow)"
+            aria-label="Next image"
+          >
+            <svg
+              width="32"
+              height="32"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              aria-hidden="true"
+            >
+              <polyline points="9 18 15 12 9 6" />
+            </svg>
+          </button>
+        )}
+
+        {/* Image */}
+        <img
+          src={`/uploads/${currentPhoto.original_path}`}
+          alt={currentPhoto.filename}
+          className="lightbox__image"
+        />
+
+        {/* Counter */}
+        <div className="lightbox__counter" aria-live="polite">
+          {currentIndex + 1} / {photos.length}
+        </div>
       </div>
     </div>
   );

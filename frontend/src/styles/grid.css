@@ -1,0 +1,341 @@
+/**
+ * Unified Grid System
+ *
+ * Modern CSS Grid based layout system.
+ * Provides both utility classes and component patterns.
+ *
+ * Breakpoints:
+ * - sm: 576px (phone landscape)
+ * - md: 768px (tablet)
+ * - lg: 1024px (laptop)
+ * - xl: 1280px (desktop)
+ * - 2xl: 1536px (large desktop)
+ */
+
+/* ===========================================
+   1. ROW/COLUMN FLEXBOX GRID (Legacy Support)
+   =========================================== */
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  margin-inline: calc(var(--grid-gap) / -2);
+}
+
+.row > * {
+  flex-shrink: 0;
+  width: 100%;
+  max-width: 100%;
+  padding-inline: calc(var(--grid-gap) / 2);
+}
+
+/* Row gap utilities */
+.row--gap-sm {
+  margin-inline: calc(var(--grid-gap-sm) / -2);
+}
+
+.row--gap-sm > * {
+  padding-inline: calc(var(--grid-gap-sm) / 2);
+}
+
+.row--no-gap {
+  margin-inline: 0;
+}
+
+.row--no-gap > * {
+  padding-inline: 0;
+}
+
+/* ===========================================
+   2. COLUMN WIDTH CLASSES
+   =========================================== */
+
+/* Base columns (mobile-first) */
+.col { flex: 1 0 0%; }
+.col-auto { flex: 0 0 auto; width: auto; }
+
+.col-1 { flex: 0 0 auto; width: 8.333333%; }
+.col-2 { flex: 0 0 auto; width: 16.666667%; }
+.col-3 { flex: 0 0 auto; width: 25%; }
+.col-4 { flex: 0 0 auto; width: 33.333333%; }
+.col-5 { flex: 0 0 auto; width: 41.666667%; }
+.col-6 { flex: 0 0 auto; width: 50%; }
+.col-7 { flex: 0 0 auto; width: 58.333333%; }
+.col-8 { flex: 0 0 auto; width: 66.666667%; }
+.col-9 { flex: 0 0 auto; width: 75%; }
+.col-10 { flex: 0 0 auto; width: 83.333333%; }
+.col-11 { flex: 0 0 auto; width: 91.666667%; }
+.col-12 { flex: 0 0 auto; width: 100%; }
+
+/* SM breakpoint (576px+) */
+@media (min-width: 576px) {
+  .col-sm { flex: 1 0 0%; }
+  .col-sm-auto { flex: 0 0 auto; width: auto; }
+  .col-sm-1 { flex: 0 0 auto; width: 8.333333%; }
+  .col-sm-2 { flex: 0 0 auto; width: 16.666667%; }
+  .col-sm-3 { flex: 0 0 auto; width: 25%; }
+  .col-sm-4 { flex: 0 0 auto; width: 33.333333%; }
+  .col-sm-5 { flex: 0 0 auto; width: 41.666667%; }
+  .col-sm-6 { flex: 0 0 auto; width: 50%; }
+  .col-sm-7 { flex: 0 0 auto; width: 58.333333%; }
+  .col-sm-8 { flex: 0 0 auto; width: 66.666667%; }
+  .col-sm-9 { flex: 0 0 auto; width: 75%; }
+  .col-sm-10 { flex: 0 0 auto; width: 83.333333%; }
+  .col-sm-11 { flex: 0 0 auto; width: 91.666667%; }
+  .col-sm-12 { flex: 0 0 auto; width: 100%; }
+}
+
+/* MD breakpoint (768px+) */
+@media (min-width: 768px) {
+  .col-md { flex: 1 0 0%; }
+  .col-md-auto { flex: 0 0 auto; width: auto; }
+  .col-md-1 { flex: 0 0 auto; width: 8.333333%; }
+  .col-md-2 { flex: 0 0 auto; width: 16.666667%; }
+  .col-md-3 { flex: 0 0 auto; width: 25%; }
+  .col-md-4 { flex: 0 0 auto; width: 33.333333%; }
+  .col-md-5 { flex: 0 0 auto; width: 41.666667%; }
+  .col-md-6 { flex: 0 0 auto; width: 50%; }
+  .col-md-7 { flex: 0 0 auto; width: 58.333333%; }
+  .col-md-8 { flex: 0 0 auto; width: 66.666667%; }
+  .col-md-9 { flex: 0 0 auto; width: 75%; }
+  .col-md-10 { flex: 0 0 auto; width: 83.333333%; }
+  .col-md-11 { flex: 0 0 auto; width: 91.666667%; }
+  .col-md-12 { flex: 0 0 auto; width: 100%; }
+}
+
+/* LG breakpoint (1024px+) */
+@media (min-width: 1024px) {
+  .col-lg { flex: 1 0 0%; }
+  .col-lg-auto { flex: 0 0 auto; width: auto; }
+  .col-lg-1 { flex: 0 0 auto; width: 8.333333%; }
+  .col-lg-2 { flex: 0 0 auto; width: 16.666667%; }
+  .col-lg-3 { flex: 0 0 auto; width: 25%; }
+  .col-lg-4 { flex: 0 0 auto; width: 33.333333%; }
+  .col-lg-5 { flex: 0 0 auto; width: 41.666667%; }
+  .col-lg-6 { flex: 0 0 auto; width: 50%; }
+  .col-lg-7 { flex: 0 0 auto; width: 58.333333%; }
+  .col-lg-8 { flex: 0 0 auto; width: 66.666667%; }
+  .col-lg-9 { flex: 0 0 auto; width: 75%; }
+  .col-lg-10 { flex: 0 0 auto; width: 83.333333%; }
+  .col-lg-11 { flex: 0 0 auto; width: 91.666667%; }
+  .col-lg-12 { flex: 0 0 auto; width: 100%; }
+}
+
+/* XL breakpoint (1280px+) */
+@media (min-width: 1280px) {
+  .col-xl { flex: 1 0 0%; }
+  .col-xl-auto { flex: 0 0 auto; width: auto; }
+  .col-xl-1 { flex: 0 0 auto; width: 8.333333%; }
+  .col-xl-2 { flex: 0 0 auto; width: 16.666667%; }
+  .col-xl-3 { flex: 0 0 auto; width: 25%; }
+  .col-xl-4 { flex: 0 0 auto; width: 33.333333%; }
+  .col-xl-5 { flex: 0 0 auto; width: 41.666667%; }
+  .col-xl-6 { flex: 0 0 auto; width: 50%; }
+  .col-xl-7 { flex: 0 0 auto; width: 58.333333%; }
+  .col-xl-8 { flex: 0 0 auto; width: 66.666667%; }
+  .col-xl-9 { flex: 0 0 auto; width: 75%; }
+  .col-xl-10 { flex: 0 0 auto; width: 83.333333%; }
+  .col-xl-11 { flex: 0 0 auto; width: 91.666667%; }
+  .col-xl-12 { flex: 0 0 auto; width: 100%; }
+}
+
+/* ===========================================
+   3. FLEX UTILITIES
+   =========================================== */
+
+/* Justify content */
+.justify-start { justify-content: flex-start; }
+.justify-center { justify-content: center; }
+.justify-end { justify-content: flex-end; }
+.justify-between { justify-content: space-between; }
+.justify-around { justify-content: space-around; }
+.justify-evenly { justify-content: space-evenly; }
+
+/* Align items */
+.items-start { align-items: flex-start; }
+.items-center { align-items: center; }
+.items-end { align-items: flex-end; }
+.items-stretch { align-items: stretch; }
+.items-baseline { align-items: baseline; }
+
+/* Align self */
+.self-start { align-self: flex-start; }
+.self-center { align-self: center; }
+.self-end { align-self: flex-end; }
+.self-stretch { align-self: stretch; }
+
+/* Flex wrap */
+.flex-wrap { flex-wrap: wrap; }
+.flex-nowrap { flex-wrap: nowrap; }
+
+/* Flex direction */
+.flex-row { flex-direction: row; }
+.flex-col { flex-direction: column; }
+
+@media (min-width: 768px) {
+  .md\:flex-row { flex-direction: row; }
+  .md\:flex-col { flex-direction: column; }
+}
+
+/* Gap utilities */
+.gap-1 { gap: var(--space-1); }
+.gap-2 { gap: var(--space-2); }
+.gap-3 { gap: var(--space-3); }
+.gap-4 { gap: var(--space-4); }
+.gap-5 { gap: var(--space-5); }
+.gap-6 { gap: var(--space-6); }
+.gap-8 { gap: var(--space-8); }
+
+/* ===========================================
+   4. RESPONSIVE VISIBILITY
+   =========================================== */
+
+/* Hide below breakpoint */
+.hide-below-sm { display: none; }
+.hide-below-md { display: none; }
+.hide-below-lg { display: none; }
+.hide-below-xl { display: none; }
+
+@media (min-width: 576px) {
+  .hide-below-sm { display: revert; }
+}
+
+@media (min-width: 768px) {
+  .hide-below-md { display: revert; }
+}
+
+@media (min-width: 1024px) {
+  .hide-below-lg { display: revert; }
+}
+
+@media (min-width: 1280px) {
+  .hide-below-xl { display: revert; }
+}
+
+/* Hide above breakpoint */
+@media (min-width: 576px) {
+  .hide-above-sm { display: none; }
+}
+
+@media (min-width: 768px) {
+  .hide-above-md { display: none; }
+}
+
+@media (min-width: 1024px) {
+  .hide-above-lg { display: none; }
+}
+
+@media (min-width: 1280px) {
+  .hide-above-xl { display: none; }
+}
+
+/* ===========================================
+   5. SPACING UTILITIES
+   =========================================== */
+
+/* Margin utilities */
+.m-0 { margin: 0; }
+.m-auto { margin: auto; }
+
+.mt-1 { margin-top: var(--space-1); }
+.mt-2 { margin-top: var(--space-2); }
+.mt-3 { margin-top: var(--space-3); }
+.mt-4 { margin-top: var(--space-4); }
+.mt-5 { margin-top: var(--space-5); }
+.mt-6 { margin-top: var(--space-6); }
+.mt-8 { margin-top: var(--space-8); }
+
+.mb-1 { margin-bottom: var(--space-1); }
+.mb-2 { margin-bottom: var(--space-2); }
+.mb-3 { margin-bottom: var(--space-3); }
+.mb-4 { margin-bottom: var(--space-4); }
+.mb-5 { margin-bottom: var(--space-5); }
+.mb-6 { margin-bottom: var(--space-6); }
+.mb-8 { margin-bottom: var(--space-8); }
+
+.mx-auto { margin-inline: auto; }
+
+/* Padding utilities */
+.p-0 { padding: 0; }
+
+.p-1 { padding: var(--space-1); }
+.p-2 { padding: var(--space-2); }
+.p-3 { padding: var(--space-3); }
+.p-4 { padding: var(--space-4); }
+.p-5 { padding: var(--space-5); }
+.p-6 { padding: var(--space-6); }
+.p-8 { padding: var(--space-8); }
+
+.px-1 { padding-inline: var(--space-1); }
+.px-2 { padding-inline: var(--space-2); }
+.px-3 { padding-inline: var(--space-3); }
+.px-4 { padding-inline: var(--space-4); }
+.px-5 { padding-inline: var(--space-5); }
+.px-6 { padding-inline: var(--space-6); }
+.px-8 { padding-inline: var(--space-8); }
+
+.py-1 { padding-block: var(--space-1); }
+.py-2 { padding-block: var(--space-2); }
+.py-3 { padding-block: var(--space-3); }
+.py-4 { padding-block: var(--space-4); }
+.py-5 { padding-block: var(--space-5); }
+.py-6 { padding-block: var(--space-6); }
+.py-8 { padding-block: var(--space-8); }
+
+/* ===========================================
+   6. WIDTH UTILITIES
+   =========================================== */
+
+.w-full { width: 100%; }
+.w-auto { width: auto; }
+
+.max-w-xs { max-width: 20rem; }     /* 320px */
+.max-w-sm { max-width: 24rem; }     /* 384px */
+.max-w-md { max-width: 28rem; }     /* 448px */
+.max-w-lg { max-width: 32rem; }     /* 512px */
+.max-w-xl { max-width: 36rem; }     /* 576px */
+.max-w-2xl { max-width: 42rem; }    /* 672px */
+.max-w-3xl { max-width: 48rem; }    /* 768px */
+.max-w-4xl { max-width: 56rem; }    /* 896px */
+.max-w-5xl { max-width: 64rem; }    /* 1024px */
+.max-w-full { max-width: 100%; }
+.max-w-prose { max-width: var(--content-width); }
+
+/* ===========================================
+   7. ORDER UTILITIES
+   =========================================== */
+
+.order-first { order: -9999; }
+.order-last { order: 9999; }
+.order-none { order: 0; }
+.order-1 { order: 1; }
+.order-2 { order: 2; }
+.order-3 { order: 3; }
+.order-4 { order: 4; }
+.order-5 { order: 5; }
+.order-6 { order: 6; }
+
+/* ===========================================
+   8. OFFSET CLASSES (Legacy)
+   =========================================== */
+
+.offset-1 { margin-left: 8.333333%; }
+.offset-2 { margin-left: 16.666667%; }
+.offset-3 { margin-left: 25%; }
+.offset-4 { margin-left: 33.333333%; }
+.offset-5 { margin-left: 41.666667%; }
+.offset-6 { margin-left: 50%; }
+
+@media (min-width: 768px) {
+  .offset-md-0 { margin-left: 0; }
+  .offset-md-1 { margin-left: 8.333333%; }
+  .offset-md-2 { margin-left: 16.666667%; }
+  .offset-md-3 { margin-left: 25%; }
+}
+
+@media (min-width: 1024px) {
+  .offset-lg-0 { margin-left: 0; }
+  .offset-lg-1 { margin-left: 8.333333%; }
+  .offset-lg-2 { margin-left: 16.666667%; }
+  .offset-lg-3 { margin-left: 25%; }
+}

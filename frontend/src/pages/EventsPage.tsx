@@ -1,12 +1,16 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../hooks/useAuth';
+import { useIsMobile } from '../hooks/useMediaQuery';
 import { eventsApi } from '../api/events';
 import { CategoryWithEvents } from '../api/types';
 import MonthTabs from '../components/MonthTabs';
 import CategoryAccordion from '../components/CategoryAccordion';
+import EventCard from '../components/EventCard';
+import '../styles/pages/EventsPage.css';
 
 function EventsPage() {
   const { isAuthenticated } = useAuth();
+  const isMobile = useIsMobile();
   const [selectedMonth, setSelectedMonth] = useState(() => new Date().getMonth() + 1);
   const [categories, setCategories] = useState<CategoryWithEvents[]>([]);
   const [loading, setLoading] = useState(true);
@@ -102,19 +106,25 @@ function EventsPage() {
   // Пользователь может редактировать если он авторизован
   const canEdit = isAuthenticated === true;
 
+  // Page title based on viewport
+  const pageTitle = isMobile ? 'План 2026' : 'План мероприятий СПО РО 2026';
+
   // Показываем загрузку только при первичной загрузке
   if (isAuthenticated === null) {
     return (
       <div className="events-page">
-        <div className="loading">Проверка авторизации...</div>
+        <div className="events-page__loading">
+          <div className="events-page__loading-spinner" />
+          <span className="events-page__loading-text">Проверка авторизации...</span>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="events-page">
-      <header className="header">
-        <h1>План мероприятий СПО РО 2026</h1>
+    <div className={`events-page${isMobile ? ' events-page--mobile' : ''}`}>
+      <header className="events-page__header">
+        <h1 className="events-page__title">{pageTitle}</h1>
       </header>
 
       <MonthTabs
@@ -122,28 +132,84 @@ function EventsPage() {
         onMonthChange={setSelectedMonth}
       />
 
-      <main className="main-content">
-        {loading && <div className="loading">Загрузка...</div>}
-
-        {error && <div className="error">{error}</div>}
-
-        {!loading && !error && categories.length === 0 && (
-          <div className="no-data">Нет мероприятий в этом месяце</div>
+      <main className="events-page__content">
+        {loading && (
+          <div className="events-page__loading">
+            <div className="events-page__loading-spinner" />
+            <span className="events-page__loading-text">Загрузка...</span>
+          </div>
         )}
 
-        {!loading && !error && categories.map(category => (
-          <CategoryAccordion
-            key={category.id}
-            category={category}
-            defaultExpanded={true}
-            onUpdateDescription={handleUpdateDescription}
-            onAddLink={handleAddLink}
-            onDeleteLink={handleDeleteLink}
-            onUploadPhoto={handleUploadPhoto}
-            onDeletePhoto={handleDeletePhoto}
-            canEdit={canEdit}
-          />
-        ))}
+        {error && (
+          <div className="events-page__error">
+            <div className="events-page__error-message">{error}</div>
+            <button
+              className="events-page__error-retry"
+              onClick={() => loadEvents(selectedMonth)}
+            >
+              Повторить
+            </button>
+          </div>
+        )}
+
+        {!loading && !error && categories.length === 0 && (
+          <div className="events-page__empty">
+            <p className="events-page__empty-text">Нет мероприятий в этом месяце</p>
+          </div>
+        )}
+
+        {!loading && !error && (
+          <div className="events-page__categories">
+            {isMobile ? (
+              // Mobile view: render EventCards grouped by category
+              categories.map(category => (
+                <div key={category.id} className="events-page__category-section">
+                  <CategoryAccordion
+                    category={category}
+                    defaultExpanded={true}
+                    onUpdateDescription={handleUpdateDescription}
+                    onAddLink={handleAddLink}
+                    onDeleteLink={handleDeleteLink}
+                    onUploadPhoto={handleUploadPhoto}
+                    onDeletePhoto={handleDeletePhoto}
+                    canEdit={canEdit}
+                    renderContent={() => (
+                      <div className="events-page__cards">
+                        {category.events.map(event => (
+                          <EventCard
+                            key={event.id}
+                            event={event}
+                            onUpdateDescription={handleUpdateDescription}
+                            onAddLink={handleAddLink}
+                            onDeleteLink={handleDeleteLink}
+                            onUploadPhoto={handleUploadPhoto}
+                            onDeletePhoto={handleDeletePhoto}
+                            canEdit={canEdit}
+                          />
+                        ))}
+                      </div>
+                    )}
+                  />
+                </div>
+              ))
+            ) : (
+              // Desktop view: render CategoryAccordion with EventsTable
+              categories.map(category => (
+                <CategoryAccordion
+                  key={category.id}
+                  category={category}
+                  defaultExpanded={true}
+                  onUpdateDescription={handleUpdateDescription}
+                  onAddLink={handleAddLink}
+                  onDeleteLink={handleDeleteLink}
+                  onUploadPhoto={handleUploadPhoto}
+                  onDeletePhoto={handleDeletePhoto}
+                  canEdit={canEdit}
+                />
+              ))
+            )}
+          </div>
+        )}
       </main>
     </div>
   );

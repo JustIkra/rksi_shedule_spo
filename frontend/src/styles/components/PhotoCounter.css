@@ -1,0 +1,62 @@
+/**
+ * PhotoCounter Component Styles
+ *
+ * Mobile-friendly photo counter using unified grid system.
+ */
+
+.photo-counter {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  min-width: var(--touch-target);
+  min-height: var(--touch-target);
+  padding: var(--space-1) var(--space-2);
+  color: var(--color-primary);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  background-color: transparent;
+  transition:
+    background-color var(--transition-fast),
+    color var(--transition-fast),
+    transform var(--transition-fast);
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.photo-counter:hover {
+  background-color: var(--color-primary-muted);
+  color: var(--color-primary-dark);
+}
+
+.photo-counter:active {
+  transform: scale(0.95);
+  background-color: var(--color-paper-dark);
+}
+
+.photo-counter:focus-visible {
+  box-shadow: var(--focus-ring);
+}
+
+.photo-counter__icon {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+}
+
+.photo-counter__count {
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .photo-counter {
+    transition: none;
+  }
+
+  .photo-counter:active {
+    transform: none;
+  }
+}

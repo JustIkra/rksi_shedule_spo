@@ -1,0 +1,353 @@
+/**
+ * EventsPage Styles
+ *
+ * Main page layout using unified grid system.
+ * Editorial aesthetic with refined typography and spacing.
+ */
+
+/* ===========================================
+   1. PAGE LAYOUT
+   =========================================== */
+
+.events-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-paper-warm);
+}
+
+/* ===========================================
+   2. HEADER SECTION - Editorial masthead
+   =========================================== */
+
+.events-page__header {
+  background: var(--color-paper);
+  border-bottom: 1px solid var(--color-rule);
+  padding: var(--space-5) var(--container-gutter);
+  position: relative;
+}
+
+/* Decorative accent line */
+.events-page__header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(
+    90deg,
+    var(--color-primary) 0%,
+    var(--color-accent) 50%,
+    var(--color-primary) 100%
+  );
+}
+
+.events-page__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(var(--text-lg), 4vw, var(--text-2xl));
+  font-weight: 600;
+  color: var(--color-ink);
+  line-height: var(--leading-tight);
+  text-align: center;
+  letter-spacing: var(--tracking-tight);
+}
+
+@media (min-width: 768px) {
+  .events-page__header {
+    padding: var(--space-6) var(--container-gutter);
+  }
+}
+
+@media (min-width: 1024px) {
+  .events-page__header {
+    padding: var(--space-8) var(--container-gutter);
+  }
+}
+
+/* ===========================================
+   3. CONTENT CONTAINER
+   =========================================== */
+
+.events-page__content {
+  flex: 1;
+  width: 100%;
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: var(--space-4) var(--container-gutter);
+}
+
+@media (min-width: 768px) {
+  .events-page__content {
+    padding: var(--space-6) var(--container-gutter);
+  }
+}
+
+@media (min-width: 1024px) {
+  .events-page__content {
+    padding: var(--space-8) var(--container-gutter);
+  }
+}
+
+/* ===========================================
+   4. LOADING STATE
+   =========================================== */
+
+.events-page__loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-10) var(--space-4);
+  min-height: 280px;
+}
+
+.events-page__loading-spinner {
+  width: 36px;
+  height: 36px;
+  border: 2px solid var(--color-rule);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.events-page__loading-text {
+  margin-top: var(--space-4);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--color-ink-secondary);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ===========================================
+   5. ERROR STATE
+   =========================================== */
+
+.events-page__error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-10) var(--space-4);
+  text-align: center;
+}
+
+.events-page__error-message {
+  font-size: var(--text-base);
+  color: var(--color-error);
+  margin: 0 0 var(--space-5) 0;
+  max-width: 400px;
+  line-height: var(--leading-relaxed);
+}
+
+.events-page__error-retry {
+  padding: var(--space-3) var(--space-6);
+  min-height: var(--touch-target);
+  background: var(--color-primary);
+  color: var(--color-paper);
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background-color var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+.events-page__error-retry:hover {
+  background: var(--color-primary-dark);
+  transform: translateY(-1px);
+}
+
+.events-page__error-retry:active {
+  transform: translateY(0);
+}
+
+/* ===========================================
+   6. EMPTY STATE
+   =========================================== */
+
+.events-page__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-10) var(--space-4);
+  text-align: center;
+  min-height: 280px;
+}
+
+.events-page__empty-text {
+  font-family: var(--font-display);
+  font-size: var(--text-md);
+  font-style: italic;
+  color: var(--color-ink-muted);
+  margin: 0;
+}
+
+/* ===========================================
+   7. CATEGORIES CONTAINER
+   =========================================== */
+
+.events-page__categories {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+@media (min-width: 768px) {
+  .events-page__categories {
+    gap: var(--space-6);
+  }
+}
+
+/* ===========================================
+   8. MOBILE VIEW
+   =========================================== */
+
+.events-page--mobile .events-page__categories {
+  gap: var(--space-4);
+}
+
+.events-page__category-section {
+  /* Wrapper for mobile category */
+}
+
+.events-page__category-section:last-child {
+  margin-bottom: 0;
+}
+
+/* Cards container - grid layout for mobile */
+.events-page__cards {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-4);
+}
+
+@media (min-width: 576px) {
+  .events-page__cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: var(--space-5);
+    padding: var(--space-5);
+  }
+}
+
+/* ===========================================
+   9. RESPONSIVE VISIBILITY
+   =========================================== */
+
+.events-page__desktop-only {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .events-page__desktop-only {
+    display: block;
+  }
+}
+
+.events-page__mobile-only {
+  display: block;
+}
+
+@media (min-width: 768px) {
+  .events-page__mobile-only {
+    display: none;
+  }
+}
+
+/* ===========================================
+   10. LEGACY CLASS SUPPORT
+   =========================================== */
+
+.events-page .loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-10) var(--space-4);
+  font-size: var(--text-sm);
+  color: var(--color-ink-secondary);
+}
+
+.events-page .error {
+  padding: var(--space-5) var(--space-4);
+  margin: var(--space-4) 0;
+  background: var(--color-error-bg);
+  border: 1px solid var(--color-error);
+  border-radius: var(--radius-md);
+  color: var(--color-error);
+  text-align: center;
+  font-size: var(--text-base);
+}
+
+.events-page .no-data {
+  padding: var(--space-10) var(--space-4);
+  text-align: center;
+  font-family: var(--font-display);
+  font-size: var(--text-md);
+  font-style: italic;
+  color: var(--color-ink-secondary);
+}
+
+.events-page .header {
+  background: var(--color-paper);
+  border-bottom: 1px solid var(--color-rule);
+  padding: var(--space-5) var(--container-gutter);
+}
+
+.events-page .header h1 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(var(--text-lg), 4vw, var(--text-2xl));
+  font-weight: 600;
+  color: var(--color-ink);
+  line-height: var(--leading-tight);
+  text-align: center;
+}
+
+@media (min-width: 768px) {
+  .events-page .header {
+    padding: var(--space-6) var(--container-gutter);
+  }
+}
+
+.events-page .main-content {
+  flex: 1;
+  width: 100%;
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: var(--space-4) var(--container-gutter);
+}
+
+@media (min-width: 768px) {
+  .events-page .main-content {
+    padding: var(--space-6) var(--container-gutter);
+  }
+}
+
+@media (min-width: 1024px) {
+  .events-page .main-content {
+    padding: var(--space-8) var(--container-gutter);
+  }
+}
+
+/* ===========================================
+   11. REDUCED MOTION
+   =========================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .events-page__loading-spinner {
+    animation: none;
+  }
+}

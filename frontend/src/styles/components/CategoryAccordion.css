@@ -1,0 +1,212 @@
+/**
+ * CategoryAccordion Component Styles
+ *
+ * Collapsible category sections using unified grid system.
+ * Editorial aesthetic with refined typography.
+ */
+
+/* ===========================================
+   Block
+   =========================================== */
+
+.category-accordion {
+  margin-bottom: var(--space-5);
+  background: var(--color-paper);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+  width: 100%;
+  border: 1px solid var(--color-rule-light);
+  transition: box-shadow var(--transition-normal);
+}
+
+.category-accordion:hover {
+  box-shadow: var(--shadow-card-hover);
+}
+
+.category-accordion:last-child {
+  margin-bottom: 0;
+}
+
+/* ===========================================
+   Header
+   =========================================== */
+
+.category-accordion__header {
+  /* Reset button */
+  appearance: none;
+  border: none;
+  font: inherit;
+
+  /* Layout */
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-4) var(--space-5);
+
+  /* Touch target */
+  min-height: var(--touch-target);
+
+  /* Visual - subtle gradient */
+  background: linear-gradient(
+    180deg,
+    var(--color-paper) 0%,
+    var(--color-paper-muted) 100%
+  );
+  cursor: pointer;
+  user-select: none;
+  text-align: left;
+  border-bottom: 1px solid var(--color-rule-light);
+
+  /* Interaction */
+  transition: background var(--transition-fast);
+}
+
+.category-accordion__header:hover {
+  background: linear-gradient(
+    180deg,
+    var(--color-paper-muted) 0%,
+    var(--color-paper-dark) 100%
+  );
+}
+
+.category-accordion__header:focus-visible {
+  box-shadow: var(--focus-ring);
+  z-index: 1;
+  position: relative;
+}
+
+/* ===========================================
+   Arrow
+   =========================================== */
+
+.category-accordion__arrow {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-ink-muted);
+  transform: rotate(0deg);
+  transition: transform var(--transition-normal);
+}
+
+.category-accordion__arrow svg {
+  display: block;
+}
+
+.category-accordion--expanded .category-accordion__arrow {
+  transform: rotate(90deg);
+}
+
+/* ===========================================
+   Name
+   =========================================== */
+
+.category-accordion__name {
+  flex: 1;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--text-md);
+  color: var(--color-ink);
+  line-height: var(--leading-snug);
+}
+
+/* ===========================================
+   Count Badge
+   =========================================== */
+
+.category-accordion__count {
+  flex-shrink: 0;
+  color: var(--color-ink-secondary);
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  background: var(--color-paper-dark);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-full);
+  letter-spacing: var(--tracking-wide);
+}
+
+/* ===========================================
+   Content
+   =========================================== */
+
+.category-accordion__content {
+  overflow: hidden;
+  transition: max-height var(--transition-slow);
+  background: var(--color-paper);
+}
+
+.category-accordion__content-inner {
+  padding: 0;
+}
+
+/* Visibility states */
+.category-accordion__content[aria-hidden="true"] {
+  visibility: hidden;
+}
+
+.category-accordion__content[aria-hidden="false"] {
+  visibility: visible;
+}
+
+/* ===========================================
+   Responsive
+   =========================================== */
+
+@media (max-width: 767px) {
+  .category-accordion__header {
+    padding: var(--space-3) var(--space-4);
+    gap: var(--space-3);
+  }
+
+  .category-accordion__name {
+    font-size: var(--text-sm);
+  }
+
+  .category-accordion__count {
+    font-size: var(--text-xs);
+    padding: 2px var(--space-2);
+  }
+}
+
+@media (min-width: 768px) {
+  .category-accordion {
+    margin-bottom: var(--space-6);
+  }
+
+  .category-accordion__header {
+    padding: var(--space-5) var(--space-6);
+  }
+
+  .category-accordion__name {
+    font-size: var(--text-lg);
+  }
+}
+
+@media (min-width: 1024px) {
+  .category-accordion__header {
+    padding: var(--space-5) var(--space-8);
+  }
+}
+
+/* ===========================================
+   Reduced Motion
+   =========================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .category-accordion__arrow {
+    transition: none;
+  }
+
+  .category-accordion__content {
+    transition: none;
+  }
+
+  .category-accordion {
+    transition: none;
+  }
+}

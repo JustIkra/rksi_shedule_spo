@@ -1,0 +1,191 @@
+/**
+ * MonthTabs Component Styles
+ *
+ * Responsive month selector using unified grid system.
+ * Desktop: horizontal pill-style tabs
+ * Mobile: native select dropdown
+ */
+
+/* ===========================================
+   DESKTOP: Horizontal Tabs
+   =========================================== */
+
+.month-tabs {
+  display: flex;
+  gap: var(--space-2);
+  padding: var(--space-4) var(--container-gutter);
+  background: var(--color-paper);
+  overflow-x: auto;
+  border-bottom: 1px solid var(--color-rule);
+  max-width: var(--container-max);
+  margin: 0 auto;
+
+  /* Hide scrollbar */
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.month-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+/* Center tabs on wider screens */
+@media (min-width: 1024px) {
+  .month-tabs {
+    justify-content: center;
+  }
+}
+
+.month-tabs__tab {
+  padding: var(--space-2) var(--space-4);
+  cursor: pointer;
+  border: 1px solid transparent;
+  background: transparent;
+  border-radius: var(--radius-full);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--color-ink-secondary);
+  white-space: nowrap;
+  transition:
+    color var(--transition-fast),
+    background-color var(--transition-fast),
+    border-color var(--transition-fast);
+  min-height: var(--touch-target);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.month-tabs__tab:hover {
+  color: var(--color-primary);
+  background: var(--color-primary-muted);
+}
+
+.month-tabs__tab:focus-visible {
+  box-shadow: var(--focus-ring);
+}
+
+.month-tabs__tab--active {
+  background: var(--color-primary);
+  color: var(--color-paper);
+  font-weight: 600;
+  border-color: var(--color-primary);
+}
+
+.month-tabs__tab--active:hover {
+  background: var(--color-primary-dark);
+  border-color: var(--color-primary-dark);
+  color: var(--color-paper);
+}
+
+/* ===========================================
+   MOBILE: Native Select
+   =========================================== */
+
+.month-select {
+  display: none;
+  position: relative;
+  padding: var(--space-4) var(--container-gutter);
+  background: var(--color-paper);
+  border-bottom: 1px solid var(--color-rule);
+}
+
+.month-select__label {
+  /* Screen reader only */
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.month-select__input {
+  width: 100%;
+  min-height: var(--touch-target);
+  padding: var(--space-3) var(--space-10) var(--space-3) var(--space-4);
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  font-weight: 500;
+  color: var(--color-ink);
+  background: var(--color-paper-muted);
+  border: 1px solid var(--color-rule);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
+
+  /* Remove default arrow */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+.month-select__input:hover {
+  border-color: var(--color-primary-light);
+}
+
+.month-select__input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-muted);
+}
+
+.month-select__icon {
+  position: absolute;
+  right: calc(var(--container-gutter) + var(--space-4));
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: var(--color-ink-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color var(--transition-fast);
+}
+
+.month-select__input:focus + .month-select__icon {
+  color: var(--color-primary);
+}
+
+/* ===========================================
+   RESPONSIVE
+   =========================================== */
+
+@media (max-width: 767px) {
+  .month-tabs {
+    display: none;
+  }
+
+  .month-select {
+    display: block;
+  }
+}
+
+@media (min-width: 768px) {
+  .month-tabs {
+    display: flex;
+    padding: var(--space-5) var(--container-gutter);
+  }
+
+  .month-select {
+    display: none;
+  }
+}
+
+/* ===========================================
+   REDUCED MOTION
+   =========================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .month-tabs__tab,
+  .month-select__input,
+  .month-select__icon {
+    transition: none;
+  }
+}

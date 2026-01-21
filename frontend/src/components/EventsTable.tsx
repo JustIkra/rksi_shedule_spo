@@ -1,6 +1,7 @@
 import { FC } from 'react';
 import { EventWithRelations } from '../api/types';
 import EventRow from './EventRow';
+import '../styles/components/EventsTable.css';
 
 interface EventsTableProps {
   events: EventWithRelations[];
@@ -22,29 +23,27 @@ const EventsTable: FC<EventsTableProps> = ({
   canEdit
 }) => {
   if (events.length === 0) {
-    return <p className="no-events">Нет мероприятий</p>;
+    return <p className="events-table__no-events">Нет мероприятий</p>;
   }
 
   return (
     <table className="events-table">
-      <thead>
-        <tr>
-          <th className="th-number">N п/п</th>
-          <th className="th-name">Наименование мероприятия</th>
-          <th className="th-date">Дата</th>
-          <th className="th-responsible">Ответственные</th>
-          <th className="th-location">Место</th>
-          <th className="th-description">Пояснение</th>
-          <th className="th-links">Ссылки</th>
-          <th className="th-photos">Фото</th>
+      <thead className="events-table__header">
+        <tr className="events-table__header-row">
+          <th className="events-table__header-cell events-table__header-cell--name">Наименование</th>
+          <th className="events-table__header-cell events-table__header-cell--date">Дата</th>
+          <th className="events-table__header-cell events-table__header-cell--responsible">Ответственные</th>
+          <th className="events-table__header-cell events-table__header-cell--location hide-below-lg">Место</th>
+          <th className="events-table__header-cell events-table__header-cell--description hide-below-xl">Пояснение</th>
+          <th className="events-table__header-cell events-table__header-cell--links hide-below-lg">Ссылки</th>
+          <th className="events-table__header-cell events-table__header-cell--photos">Фото</th>
         </tr>
       </thead>
-      <tbody>
-        {events.map((event, index) => (
+      <tbody className="events-table__body">
+        {events.map((event) => (
           <EventRow
             key={event.id}
             event={event}
-            index={index}
             onUpdateDescription={onUpdateDescription}
             onAddLink={onAddLink}
             onDeleteLink={onDeleteLink}

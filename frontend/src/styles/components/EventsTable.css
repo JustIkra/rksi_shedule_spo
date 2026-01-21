@@ -1,0 +1,286 @@
+/**
+ * EventsTable Component Styles
+ *
+ * Desktop table using unified grid system.
+ * Editorial aesthetic with refined typography.
+ */
+
+/* ===========================================
+   TABLE VARIABLES
+   =========================================== */
+
+.events-table {
+  --table-header-bg: var(--color-paper-muted);
+  --table-header-color: var(--color-ink);
+  --table-border-color: var(--color-rule-light);
+  --table-row-hover-bg: var(--color-primary-muted);
+  --table-row-alt-bg: rgba(0, 0, 0, 0.015);
+  --table-cell-py: var(--space-3);
+  --table-cell-px: var(--space-4);
+  --table-header-sticky-top: 0;
+
+  /* Column widths */
+  --col-width-name: 28%;
+  --col-width-date: 10%;
+  --col-width-responsible: 16%;
+  --col-width-location: 12%;
+  --col-width-description: 14%;
+  --col-width-links: 10%;
+  --col-width-photos: 10%;
+}
+
+/* ===========================================
+   TABLE BLOCK
+   =========================================== */
+
+.events-table {
+  width: 100%;
+  border-collapse: collapse;
+  border-spacing: 0;
+  background-color: var(--color-paper);
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  table-layout: fixed;
+}
+
+/* Hide on mobile */
+@media (max-width: 767px) {
+  .events-table {
+    display: none;
+  }
+}
+
+/* ===========================================
+   TABLE HEADER
+   =========================================== */
+
+.events-table__header {
+  background-color: var(--table-header-bg);
+}
+
+.events-table__header-row {
+  border-bottom: 2px solid var(--table-border-color);
+}
+
+.events-table__header-cell {
+  padding: var(--space-4) var(--table-cell-px);
+  text-align: left;
+  font-weight: 600;
+  font-size: var(--text-sm);
+  color: var(--color-ink);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+  white-space: nowrap;
+  position: sticky;
+  top: var(--table-header-sticky-top);
+  background-color: var(--table-header-bg);
+  z-index: 10;
+  border-bottom: 2px solid var(--table-border-color);
+}
+
+/* Header column widths */
+.events-table__header-cell--name { width: var(--col-width-name); }
+.events-table__header-cell--date { width: var(--col-width-date); }
+.events-table__header-cell--responsible { width: var(--col-width-responsible); }
+.events-table__header-cell--location { width: var(--col-width-location); }
+.events-table__header-cell--description { width: var(--col-width-description); }
+.events-table__header-cell--links { width: var(--col-width-links); }
+.events-table__header-cell--photos { width: var(--col-width-photos); }
+
+/* ===========================================
+   TABLE BODY
+   =========================================== */
+
+.events-table__body {
+  /* Rows container */
+}
+
+/* ===========================================
+   TABLE ROW
+   =========================================== */
+
+.events-table__row {
+  border-bottom: 1px solid var(--table-border-color);
+  transition: background-color var(--transition-fast);
+}
+
+.events-table__row:last-child {
+  border-bottom: none;
+}
+
+.events-table__row:hover {
+  background-color: var(--table-row-hover-bg);
+}
+
+/* Alternating rows */
+.events-table__row:nth-child(even) {
+  background-color: var(--table-row-alt-bg);
+}
+
+.events-table__row:nth-child(even):hover {
+  background-color: var(--table-row-hover-bg);
+}
+
+/* ===========================================
+   TABLE CELL
+   =========================================== */
+
+.events-table__cell {
+  padding: var(--table-cell-py) var(--table-cell-px);
+  vertical-align: top;
+  color: var(--color-ink);
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  line-height: var(--leading-relaxed);
+}
+
+/* Cell modifiers */
+.events-table__cell--name {
+  font-weight: 500;
+  font-family: var(--font-display);
+  font-size: var(--text-base);
+}
+
+.events-table__cell--date {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.events-table__cell--description {
+  color: var(--color-ink-secondary);
+  font-size: var(--text-sm);
+  line-height: var(--leading-normal);
+}
+
+/* ===========================================
+   NO EVENTS
+   =========================================== */
+
+.events-table__no-events {
+  padding: var(--space-8);
+  text-align: center;
+  color: var(--color-ink-muted);
+  font-family: var(--font-display);
+  font-style: italic;
+}
+
+/* ===========================================
+   RESPONSIVE VISIBILITY
+   =========================================== */
+
+/* Hide below lg (1024px) */
+.hide-below-lg {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .hide-below-lg {
+    display: table-cell;
+  }
+}
+
+/* Hide below xl (1280px) */
+.hide-below-xl {
+  display: none;
+}
+
+@media (min-width: 1280px) {
+  .hide-below-xl {
+    display: table-cell;
+  }
+}
+
+/* ===========================================
+   TABLET (768px - 1023px)
+   =========================================== */
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .events-table {
+    --col-width-name: 45%;
+    --col-width-date: 15%;
+    --col-width-responsible: 26%;
+    --col-width-photos: 14%;
+  }
+
+  .events-table__cell {
+    padding: var(--space-2) var(--space-3);
+  }
+
+  .events-table__header-cell {
+    padding: var(--space-3) var(--space-3);
+    font-size: var(--text-xs);
+  }
+}
+
+/* ===========================================
+   DESKTOP LG (1024px - 1279px)
+   =========================================== */
+
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .events-table {
+    --col-width-name: 30%;
+    --col-width-date: 12%;
+    --col-width-responsible: 18%;
+    --col-width-location: 13%;
+    --col-width-links: 13%;
+    --col-width-photos: 14%;
+  }
+}
+
+/* ===========================================
+   DESKTOP XL (1280px+)
+   =========================================== */
+
+@media (min-width: 1280px) {
+  .events-table {
+    font-size: var(--text-base);
+  }
+
+  .events-table__cell {
+    padding: var(--space-5) var(--table-cell-px);
+  }
+}
+
+/* ===========================================
+   LINKS
+   =========================================== */
+
+.events-table__cell a {
+  color: var(--color-primary);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+.events-table__cell a:hover {
+  color: var(--color-primary-dark);
+  text-decoration: underline;
+}
+
+/* ===========================================
+   PHOTOS
+   =========================================== */
+
+.events-table__cell--photos img {
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition:
+    transform var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+.events-table__cell--photos img:hover {
+  transform: scale(1.05);
+  box-shadow: var(--shadow-sm);
+}
+
+/* ===========================================
+   REDUCED MOTION
+   =========================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .events-table__row,
+  .events-table__cell a,
+  .events-table__cell--photos img {
+    transition: none;
+  }
+}

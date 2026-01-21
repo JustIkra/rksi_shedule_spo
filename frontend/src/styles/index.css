@@ -1,0 +1,30 @@
+/* Main CSS Entry Point
+ * Import order:
+ * 1. Variables (CSS custom properties)
+ * 2. Base styles (reset and foundation)
+ * 3. Grid system
+ * 4. Components
+ * 5. Pages
+ */
+
+@import './variables.css';
+@import './base.css';
+@import './grid.css';
+
+/* Components */
+@import './components/MonthTabs.css';
+@import './components/CategoryAccordion.css';
+@import './components/EventsTable.css';
+@import './components/EventRow.css';
+@import './components/EventCard.css';
+@import './components/BottomSheet.css';
+@import './components/PhotoCounter.css';
+@import './components/Lightbox.css';
+@import './components/ConfirmDialog.css';
+@import './components/EditableDescription.css';
+@import './components/LoginForm.css';
+
+/* Pages */
+@import './pages/EventsPage.css';
+@import './pages/LoginPage.css';
+@import './pages/AdminPage.css';

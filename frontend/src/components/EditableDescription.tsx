@@ -1,4 +1,4 @@
-import { FC, useState, useRef, useEffect } from 'react';
+import { FC, useState, useRef, useEffect, useCallback } from 'react';
 
 interface EditableDescriptionProps {
   value: string | null;
@@ -17,11 +17,26 @@ const EditableDescription: FC<EditableDescriptionProps> = ({
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const originalValue = useRef(value || '');
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // Автоматическое расширение textarea
+  const autoResize = useCallback(() => {
+    const textarea = textareaRef.current;
+    if (textarea) {
+      textarea.style.height = 'auto';
+      textarea.style.height = `${textarea.scrollHeight}px`;
+    }
+  }, []);
 
   useEffect(() => {
     setText(value || '');
     originalValue.current = value || '';
   }, [value]);
+
+  // Авторесайз при изменении текста или монтировании
+  useEffect(() => {
+    autoResize();
+  }, [text, autoResize]);
 
   const handleBlur = async () => {
     const trimmedText = text.trim();
@@ -50,12 +65,13 @@ const EditableDescription: FC<EditableDescriptionProps> = ({
   return (
     <div className="editable-description">
       <textarea
+        ref={textareaRef}
         value={text}
         onChange={(e) => setText(e.target.value)}
         onBlur={handleBlur}
         disabled={disabled || saving}
         placeholder="Добавить пояснение..."
-        rows={2}
+        rows={1}
         className="description-textarea"
       />
       {saving && <span className="save-indicator saving">Сохранение...</span>}

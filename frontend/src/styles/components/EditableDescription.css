@@ -1,0 +1,64 @@
+/**
+ * EditableDescription Component Styles
+ *
+ * Inline editable textarea using unified grid system.
+ */
+
+.editable-description {
+  position: relative;
+  width: 100%;
+}
+
+.description-textarea {
+  width: 100%;
+  padding: var(--space-2);
+  border: 1px solid var(--color-rule);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: var(--color-ink);
+  background-color: var(--color-paper);
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
+  line-height: var(--leading-normal);
+  resize: none;
+  min-height: 38px;
+  overflow: hidden;
+}
+
+.description-textarea:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-muted);
+}
+
+.description-textarea:disabled {
+  background-color: var(--color-paper-muted);
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.description-textarea::placeholder {
+  color: var(--color-ink-muted);
+}
+
+.save-indicator {
+  display: block;
+  font-size: var(--text-xs);
+  margin-top: var(--space-1);
+}
+
+.save-indicator.saving {
+  color: var(--color-ink-muted);
+}
+
+.save-indicator.saved {
+  color: var(--color-success);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .description-textarea {
+    transition: none;
+  }
+}

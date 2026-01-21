@@ -1,0 +1,323 @@
+/**
+ * Lightbox Component
+ *
+ * Full-screen image viewer using unified grid system.
+ * Editorial aesthetic with refined interactions.
+ */
+
+/* ===========================================
+   LIGHTBOX VARIABLES
+   =========================================== */
+
+.lightbox {
+  --lightbox-z: 1000;
+  --lightbox-overlay-bg: rgba(0, 0, 0, 0.95);
+  --lightbox-overlay-bg-mobile: #000;
+  --lightbox-btn-bg: rgba(255, 255, 255, 0.1);
+  --lightbox-btn-bg-hover: rgba(255, 255, 255, 0.2);
+  --lightbox-btn-color: #fff;
+  --lightbox-btn-size: 48px;
+  --lightbox-btn-size-desktop: 44px;
+  --lightbox-nav-width: 60px;
+  --lightbox-nav-width-desktop: 50px;
+  --lightbox-counter-bg: rgba(0, 0, 0, 0.6);
+  --lightbox-padding-desktop: 60px;
+}
+
+/* ===========================================
+   BLOCK
+   =========================================== */
+
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: var(--lightbox-z);
+}
+
+/* ===========================================
+   OVERLAY
+   =========================================== */
+
+.lightbox__overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--lightbox-overlay-bg-mobile);
+  cursor: pointer;
+}
+
+/* ===========================================
+   IMAGE
+   =========================================== */
+
+.lightbox__image {
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  cursor: default;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* ===========================================
+   CLOSE BUTTON
+   =========================================== */
+
+.lightbox__close {
+  position: absolute;
+  top: var(--space-2);
+  right: var(--space-2);
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--lightbox-btn-size);
+  height: var(--lightbox-btn-size);
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-md);
+  background-color: var(--lightbox-btn-bg);
+  color: var(--lightbox-btn-color);
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.lightbox__close:hover,
+.lightbox__close:focus-visible {
+  background-color: var(--lightbox-btn-bg-hover);
+}
+
+.lightbox__close:focus-visible {
+  outline: 2px solid var(--lightbox-btn-color);
+  outline-offset: 2px;
+}
+
+.lightbox__close svg {
+  width: 28px;
+  height: 28px;
+}
+
+/* ===========================================
+   DOWNLOAD BUTTON
+   =========================================== */
+
+.lightbox__download {
+  position: absolute;
+  top: var(--space-2);
+  right: calc(var(--lightbox-btn-size) + var(--space-2) + var(--space-2));
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--lightbox-btn-size);
+  height: var(--lightbox-btn-size);
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-md);
+  background-color: var(--lightbox-btn-bg);
+  color: var(--lightbox-btn-color);
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.lightbox__download:hover,
+.lightbox__download:focus-visible {
+  background-color: var(--lightbox-btn-bg-hover);
+}
+
+.lightbox__download:focus-visible {
+  outline: 2px solid var(--lightbox-btn-color);
+  outline-offset: 2px;
+}
+
+.lightbox__download svg {
+  width: 24px;
+  height: 24px;
+}
+
+/* ===========================================
+   NAVIGATION
+   =========================================== */
+
+.lightbox__nav {
+  position: absolute;
+  top: 50%;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--lightbox-nav-width);
+  height: 100%;
+  max-height: 200px;
+  padding: 0;
+  border: none;
+  background-color: var(--lightbox-btn-bg);
+  color: var(--lightbox-btn-color);
+  cursor: pointer;
+  transform: translateY(-50%);
+  transition: background-color var(--transition-fast);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.lightbox__nav:hover,
+.lightbox__nav:focus-visible {
+  background-color: var(--lightbox-btn-bg-hover);
+}
+
+.lightbox__nav:focus-visible {
+  outline: 2px solid var(--lightbox-btn-color);
+  outline-offset: -2px;
+}
+
+.lightbox__nav svg {
+  width: 36px;
+  height: 36px;
+}
+
+.lightbox__nav--prev {
+  left: 0;
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+}
+
+.lightbox__nav--next {
+  right: 0;
+  border-radius: var(--radius-md) 0 0 var(--radius-md);
+}
+
+/* ===========================================
+   COUNTER
+   =========================================== */
+
+.lightbox__counter {
+  position: absolute;
+  bottom: var(--space-5);
+  left: 50%;
+  z-index: 10;
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-md);
+  background-color: var(--lightbox-counter-bg);
+  color: var(--lightbox-btn-color);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  white-space: nowrap;
+  transform: translateX(-50%);
+  pointer-events: none;
+  user-select: none;
+}
+
+/* ===========================================
+   TABLET+ (768px)
+   =========================================== */
+
+@media (min-width: 768px) {
+  .lightbox__overlay {
+    padding: var(--lightbox-padding-desktop);
+    background-color: var(--lightbox-overlay-bg);
+  }
+
+  .lightbox__image {
+    max-width: calc(100% - var(--lightbox-padding-desktop) * 2);
+    max-height: calc(100% - var(--lightbox-padding-desktop) * 2);
+    border-radius: var(--radius-sm);
+  }
+
+  .lightbox__close {
+    top: var(--space-4);
+    right: var(--space-4);
+    width: var(--lightbox-btn-size-desktop);
+    height: var(--lightbox-btn-size-desktop);
+  }
+
+  .lightbox__close svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  .lightbox__download {
+    top: var(--space-4);
+    right: calc(var(--lightbox-btn-size-desktop) + var(--space-4) + var(--space-2));
+    width: var(--lightbox-btn-size-desktop);
+    height: var(--lightbox-btn-size-desktop);
+  }
+
+  .lightbox__nav {
+    width: var(--lightbox-nav-width-desktop);
+    max-height: 120px;
+    border-radius: var(--radius-md);
+  }
+
+  .lightbox__nav--prev {
+    left: var(--space-4);
+    border-radius: var(--radius-md);
+  }
+
+  .lightbox__nav--next {
+    right: var(--space-4);
+    border-radius: var(--radius-md);
+  }
+
+  .lightbox__nav svg {
+    width: 32px;
+    height: 32px;
+  }
+
+  .lightbox__counter {
+    bottom: var(--space-6);
+    font-size: var(--text-base);
+  }
+}
+
+/* ===========================================
+   DESKTOP (1200px+)
+   =========================================== */
+
+@media (min-width: 1200px) {
+  .lightbox__nav {
+    opacity: 0;
+    transition:
+      opacity var(--transition-normal),
+      background-color var(--transition-fast);
+  }
+
+  .lightbox__overlay:hover .lightbox__nav,
+  .lightbox__nav:focus-visible {
+    opacity: 1;
+  }
+}
+
+/* ===========================================
+   REDUCED MOTION
+   =========================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .lightbox__close,
+  .lightbox__download,
+  .lightbox__nav {
+    transition: none;
+  }
+}
+
+/* ===========================================
+   TOUCH DEVICES
+   =========================================== */
+
+@media (hover: none) and (pointer: coarse) {
+  .lightbox__nav {
+    opacity: 1;
+  }
+
+  .lightbox__close,
+  .lightbox__download,
+  .lightbox__nav {
+    min-width: 48px;
+    min-height: 48px;
+  }
+}
