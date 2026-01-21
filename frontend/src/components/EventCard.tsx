@@ -81,7 +81,7 @@ const EventCard: FC<EventCardProps> = memo(({
       {/* Always visible section */}
       <div className="event-card__header">
         <h3 className="event-card__title">
-          {event.number ? `${event.number}. ` : ''}{event.name}
+          {event.name}
         </h3>
         <div className="event-card__date">
           <span className="event-card__icon" aria-hidden="true">&#128197;</span>
