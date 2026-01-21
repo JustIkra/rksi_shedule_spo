@@ -388,20 +388,20 @@
 }
 
 /* ===========================================
-   EVENTS TABLE
+   EVENTS TABLE (Admin only)
    =========================================== */
 
-.events-table {
+.admin-layout .events-table {
   width: 100%;
   border-collapse: separate;
   border-spacing: 0;
 }
 
-.events-table thead {
+.admin-layout .events-table thead {
   background: rgba(0, 0, 0, 0.4);
 }
 
-.events-table th {
+.admin-layout .events-table th {
   padding: 14px 16px;
   font-family: 'JetBrains Mono', monospace;
   font-size: 11px;
@@ -414,20 +414,20 @@
   background: rgba(30, 30, 35, 0.95);
 }
 
-.events-table tbody {
+.admin-layout .events-table tbody {
   background: rgba(20, 20, 24, 0.95);
 }
 
-.events-table tbody tr {
+.admin-layout .events-table tbody tr {
   transition: background-color 0.15s ease;
   background: rgba(20, 20, 24, 0.95);
 }
 
-.events-table tbody tr:hover {
+.admin-layout .events-table tbody tr:hover {
   background: rgba(40, 40, 50, 0.95);
 }
 
-.events-table td {
+.admin-layout .events-table td {
   padding: 16px;
   font-size: 14px;
   color: rgba(255, 255, 255, 0.8);
@@ -436,17 +436,17 @@
   background: transparent;
 }
 
-.events-table tbody tr:last-child td {
+.admin-layout .events-table tbody tr:last-child td {
   border-bottom: none;
 }
 
-.actions-cell {
+.admin-layout .actions-cell {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
 }
 
-.empty-row {
+.admin-layout .empty-row {
   text-align: center;
   color: rgba(255, 255, 255, 0.3);
   font-style: italic;
