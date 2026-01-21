@@ -168,27 +168,7 @@
    RESPONSIVE VISIBILITY
    =========================================== */
 
-/* Hide below lg (1024px) */
-.hide-below-lg {
-  display: none;
-}
-
-@media (min-width: 1024px) {
-  .hide-below-lg {
-    display: table-cell;
-  }
-}
-
-/* Hide below xl (1280px) */
-.hide-below-xl {
-  display: none;
-}
-
-@media (min-width: 1280px) {
-  .hide-below-xl {
-    display: table-cell;
-  }
-}
+/* All columns visible on all screen sizes */
 
 /* ===========================================
    TABLET (768px - 1023px)
@@ -196,19 +176,37 @@
 
 @media (min-width: 768px) and (max-width: 1023px) {
   .events-table {
-    --col-width-name: 45%;
-    --col-width-date: 15%;
-    --col-width-responsible: 26%;
-    --col-width-photos: 14%;
+    /* Fixed widths for all 7 columns */
+    --col-width-name: 200px;
+    --col-width-date: 80px;
+    --col-width-responsible: 120px;
+    --col-width-location: 100px;
+    --col-width-description: 140px;
+    --col-width-links: 100px;
+    --col-width-photos: 80px;
+
+    /* Allow horizontal scroll */
+    min-width: 820px;
+    table-layout: fixed;
   }
 
   .events-table__cell {
-    padding: var(--space-2) var(--space-3);
+    padding: var(--space-2) var(--space-2);
+    font-size: var(--text-sm);
   }
 
   .events-table__header-cell {
-    padding: var(--space-3) var(--space-3);
+    padding: var(--space-2) var(--space-2);
     font-size: var(--text-xs);
+  }
+
+  /* Ensure content wraps properly */
+  .events-table__cell--name,
+  .events-table__cell--responsible,
+  .events-table__cell--location,
+  .events-table__cell--description {
+    word-break: break-word;
+    hyphens: auto;
   }
 }
 

@@ -33,9 +33,9 @@ const EventsTable: FC<EventsTableProps> = ({
           <th className="events-table__header-cell events-table__header-cell--name">Наименование</th>
           <th className="events-table__header-cell events-table__header-cell--date">Дата</th>
           <th className="events-table__header-cell events-table__header-cell--responsible">Ответственные</th>
-          <th className="events-table__header-cell events-table__header-cell--location hide-below-lg">Место</th>
-          <th className="events-table__header-cell events-table__header-cell--description hide-below-xl">Пояснение</th>
-          <th className="events-table__header-cell events-table__header-cell--links hide-below-lg">Ссылки</th>
+          <th className="events-table__header-cell events-table__header-cell--location">Место</th>
+          <th className="events-table__header-cell events-table__header-cell--description">Пояснение</th>
+          <th className="events-table__header-cell events-table__header-cell--links">Ссылки</th>
           <th className="events-table__header-cell events-table__header-cell--photos">Фото</th>
         </tr>
       </thead>

@@ -140,6 +140,19 @@
   background: var(--color-paper);
 }
 
+/* Allow horizontal scroll on tablets if table overflows */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .category-accordion__content {
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .category-accordion__content-inner {
+    min-width: 100%;
+  }
+}
+
 .category-accordion__content-inner {
   padding: 0;
 }

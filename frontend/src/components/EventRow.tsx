@@ -78,13 +78,13 @@ const EventRow: FC<EventRowProps> = memo(({
       {/* Responsible - Always visible */}
       <td className="events-table__cell events-table__cell--responsible">{event.responsible || '-'}</td>
 
-      {/* Location - lg+ only (>=992px) */}
-      <td className="events-table__cell events-table__cell--location hide-below-lg">
+      {/* Location */}
+      <td className="events-table__cell events-table__cell--location">
         {event.location || '-'}
       </td>
 
-      {/* Description - xl only (>=1200px) */}
-      <td className="events-table__cell events-table__cell--description hide-below-xl">
+      {/* Description */}
+      <td className="events-table__cell events-table__cell--description">
         {canEdit ? (
           <EditableDescription
             value={event.description}
@@ -96,8 +96,8 @@ const EventRow: FC<EventRowProps> = memo(({
         )}
       </td>
 
-      {/* Links - lg+ only (>=992px) */}
-      <td className="events-table__cell events-table__cell--links hide-below-lg">
+      {/* Links */}
+      <td className="events-table__cell events-table__cell--links">
         <div className="event-row__links">
           {event.links.map((link: Link) => (
             <div key={link.id} className="event-row__link">

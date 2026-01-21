@@ -259,6 +259,24 @@
   background-color: var(--color-primary-muted);
 }
 
+/* Tablet adjustments for photos */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .event-row__photo-thumb {
+    width: 40px;
+    height: 40px;
+  }
+
+  .event-row__photo-add {
+    width: 40px;
+    height: 40px;
+    font-size: var(--text-sm);
+  }
+
+  .event-row__photos {
+    gap: var(--space-1);
+  }
+}
+
 /* ===========================================
    4. LINK MODAL
    =========================================== */
