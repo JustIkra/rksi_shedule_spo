@@ -64,26 +64,14 @@ async def get_events_by_month(
         # Sort events by sort_order
         sorted_events = sorted(category.events, key=lambda e: e.sort_order)
 
-        # Create response with sorted events
+        # Create response with sorted events including links and photos
         category_data = CategoryWithEvents(
             id=category.id,
             name=category.name,
             month=category.month,
             sort_order=category.sort_order,
             events=[
-                EventResponse(
-                    id=event.id,
-                    number=event.number,
-                    name=event.name,
-                    event_date=event.event_date,
-                    responsible=event.responsible,
-                    location=event.location,
-                    description=event.description,
-                    sort_order=event.sort_order,
-                    category_id=event.category_id,
-                    created_at=event.created_at,
-                    updated_at=event.updated_at,
-                )
+                EventWithRelations.model_validate(event)
                 for event in sorted_events
             ],
         )

@@ -2,7 +2,7 @@
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from .event import EventResponse
+from .event import EventWithRelations
 
 
 class CategoryBase(BaseModel):
@@ -33,4 +33,4 @@ class CategoryResponse(BaseModel):
 class CategoryWithEvents(CategoryResponse):
     """Schema for category response with related events."""
 
-    events: list[EventResponse] = []
+    events: list[EventWithRelations] = []

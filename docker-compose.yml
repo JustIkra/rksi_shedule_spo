@@ -10,7 +10,10 @@ services:
       - ./uploads:/app/uploads:ro
       - frontend_build:/usr/share/nginx/html:ro
     depends_on:
-      - backend
+      backend:
+        condition: service_started
+      frontend:
+        condition: service_completed_successfully
     restart: unless-stopped
 
   backend:

@@ -4,7 +4,7 @@ import { CategoryWithEvents, EventWithRelations, Link, LinkCreate, Photo } from 
 export const eventsApi = {
   // Получить мероприятия по месяцу
   getByMonth: (month: number) =>
-    api.get<CategoryWithEvents[]>('/events', { params: { month } }),
+    api.get<CategoryWithEvents[]>('/events/', { params: { month } }),
 
   // Получить мероприятие по ID
   getById: (id: number) =>

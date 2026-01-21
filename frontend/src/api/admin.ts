@@ -48,6 +48,21 @@ export const adminApi = {
   deleteCategory: (id: number) =>
     api.delete(`/admin/categories/${id}`),
 
+  previewImport: (file: File) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    return api.post<{
+      categories_count: number;
+      events_count: number;
+      months_found: string[];
+      warnings: string[];
+    }>(
+      '/admin/import/preview',
+      formData,
+      { headers: { 'Content-Type': 'multipart/form-data' } }
+    );
+  },
+
   importExcel: (file: File) => {
     const formData = new FormData();
     formData.append('file', file);

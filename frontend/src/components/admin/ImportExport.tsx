@@ -5,20 +5,52 @@ interface ImportExportProps {
   onImportSuccess: () => void;
 }
 
+interface PreviewData {
+  categories_count: number;
+  events_count: number;
+  months_found: string[];
+  warnings: string[];
+}
+
 function ImportExport({ onImportSuccess }: ImportExportProps) {
   const [importing, setImporting] = useState(false);
+  const [previewing, setPreviewing] = useState(false);
   const [exporting, setExporting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [showConfirm, setShowConfirm] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [previewData, setPreviewData] = useState<PreviewData | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      setSelectedFile(file);
+    if (!file) return;
+
+    setSelectedFile(file);
+    setError(null);
+    setSuccess(null);
+    setPreviewData(null);
+    setPreviewing(true);
+
+    try {
+      const response = await adminApi.previewImport(file);
+      setPreviewData(response.data);
       setShowConfirm(true);
+    } catch (err) {
+      setError('Не удалось прочитать файл. Пожалуйста, проверьте формат.');
+      console.error(err);
+      resetFileInput();
+    } finally {
+      setPreviewing(false);
+    }
+  };
+
+  const resetFileInput = () => {
+    setSelectedFile(null);
+    setPreviewData(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
     }
   };
 
@@ -36,10 +68,7 @@ function ImportExport({ onImportSuccess }: ImportExportProps) {
         `Импорт выполнен успешно: ${response.data.imported_categories} категорий, ${response.data.imported_events} мероприятий`
       );
       onImportSuccess();
-      setSelectedFile(null);
-      if (fileInputRef.current) {
-        fileInputRef.current.value = '';
-      }
+      resetFileInput();
     } catch (err) {
       setError('Не удалось импортировать файл. Пожалуйста, проверьте формат.');
       console.error(err);
@@ -75,10 +104,7 @@ function ImportExport({ onImportSuccess }: ImportExportProps) {
 
   const cancelImport = () => {
     setShowConfirm(false);
-    setSelectedFile(null);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
-    }
+    resetFileInput();
   };
 
   return (
@@ -98,15 +124,42 @@ function ImportExport({ onImportSuccess }: ImportExportProps) {
           type="file"
           accept=".xlsx,.xls"
           onChange={handleFileSelect}
-          disabled={importing}
+          disabled={importing || previewing}
         />
+        {previewing && <p>Анализ файла...</p>}
       </div>
 
-      {showConfirm && (
+      {showConfirm && previewData && (
         <div className="confirm-dialog">
-          <p>
-            Вы уверены, что хотите импортировать "{selectedFile?.name}"?
-            <br />
+          <p style={{ marginBottom: '12px' }}>
+            <strong>Предпросмотр импорта "{selectedFile?.name}"</strong>
+          </p>
+          <div style={{ marginBottom: '12px', fontSize: '14px' }}>
+            <p>Будет импортировано:</p>
+            <ul style={{ marginLeft: '20px', marginTop: '4px' }}>
+              <li>Категорий: <strong>{previewData.categories_count}</strong></li>
+              <li>Мероприятий: <strong>{previewData.events_count}</strong></li>
+              <li>Месяцев найдено: <strong>{previewData.months_found.length}</strong> ({previewData.months_found.join(', ')})</li>
+            </ul>
+          </div>
+
+          {previewData.warnings.length > 0 && (
+            <div style={{ marginBottom: '12px', padding: '8px', background: '#fff3e0', borderRadius: '4px' }}>
+              <p style={{ color: '#e65100', fontWeight: '500', marginBottom: '4px' }}>
+                Предупреждения ({previewData.warnings.length}):
+              </p>
+              <ul style={{ marginLeft: '20px', fontSize: '13px', color: '#e65100' }}>
+                {previewData.warnings.slice(0, 5).map((warning, idx) => (
+                  <li key={idx}>{warning}</li>
+                ))}
+                {previewData.warnings.length > 5 && (
+                  <li>...и ещё {previewData.warnings.length - 5} предупреждений</li>
+                )}
+              </ul>
+            </div>
+          )}
+
+          <p style={{ color: '#d32f2f', marginBottom: '12px' }}>
             <strong>Это удалит все существующие данные!</strong>
           </p>
           <div className="confirm-actions">

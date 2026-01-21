@@ -36,9 +36,9 @@ class Event(Base):
         nullable=False,
         index=True,
     )
-    number: Mapped[str] = mapped_column(String(20), nullable=False)
+    number: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
     name: Mapped[str] = mapped_column(Text, nullable=False)
-    event_date: Mapped[str] = mapped_column(String(100), nullable=False)
+    event_date: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
     responsible: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     location: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     description: Mapped[Optional[str]] = mapped_column(Text, nullable=True)

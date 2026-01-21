@@ -1,4 +1,4 @@
-import { FC, useState, useRef } from 'react';
+import { FC, useState, useRef, memo } from 'react';
 import { EventWithRelations, Link, Photo } from '../api/types';
 import EditableDescription from './EditableDescription';
 import Lightbox from './Lightbox';
@@ -15,7 +15,8 @@ interface EventRowProps {
   canEdit: boolean;
 }
 
-const EventRow: FC<EventRowProps> = ({
+// Мемоизируем компонент для предотвращения лишних ре-рендеров (rerender-memo)
+const EventRow: FC<EventRowProps> = memo(({
   event,
   index,
   onUpdateDescription,
@@ -71,19 +72,6 @@ const EventRow: FC<EventRowProps> = ({
     }
   };
 
-  const formatDate = (dateStr: string | null): string => {
-    if (!dateStr) return '-';
-    try {
-      const date = new Date(dateStr);
-      return date.toLocaleDateString('ru-RU', {
-        day: 'numeric',
-        month: 'long'
-      });
-    } catch {
-      return dateStr;
-    }
-  };
-
   return (
     <tr className="event-row">
       {/* N п/п */}
@@ -93,7 +81,7 @@ const EventRow: FC<EventRowProps> = ({
       <td className="cell-name">{event.name}</td>
 
       {/* Дата */}
-      <td className="cell-date">{formatDate(event.event_date)}</td>
+      <td className="cell-date">{event.event_date || '-'}</td>
 
       {/* Ответственные */}
       <td className="cell-responsible">{event.responsible || '-'}</td>
@@ -135,40 +123,44 @@ const EventRow: FC<EventRowProps> = ({
           ))}
 
           {canEdit && (
-            <>
-              {showLinkForm ? (
-                <form className="link-form" onSubmit={handleAddLink}>
-                  <input
-                    type="url"
-                    placeholder="URL"
-                    value={newLinkUrl}
-                    onChange={(e) => setNewLinkUrl(e.target.value)}
-                    required
-                  />
-                  <input
-                    type="text"
-                    placeholder="Название"
-                    value={newLinkTitle}
-                    onChange={(e) => setNewLinkTitle(e.target.value)}
-                  />
-                  <div className="link-form-buttons">
-                    <button type="submit" disabled={addingLink}>
-                      {addingLink ? '...' : 'OK'}
-                    </button>
-                    <button type="button" onClick={() => setShowLinkForm(false)}>
-                      Отмена
-                    </button>
-                  </div>
-                </form>
-              ) : (
-                <button
-                  className="btn-add-link"
-                  onClick={() => setShowLinkForm(true)}
-                >
-                  + Добавить
-                </button>
+            <div className="link-form-wrapper">
+              <button
+                className="btn-add-link"
+                onClick={() => setShowLinkForm(true)}
+              >
+                + Добавить
+              </button>
+              {showLinkForm && (
+                <>
+                  <div className="link-form-overlay" onClick={() => setShowLinkForm(false)} />
+                  <form className="link-form" onSubmit={handleAddLink}>
+                    <div className="link-form-title">Добавить ссылку</div>
+                    <input
+                      type="url"
+                      placeholder="https://example.com"
+                      value={newLinkUrl}
+                      onChange={(e) => setNewLinkUrl(e.target.value)}
+                      required
+                      autoFocus
+                    />
+                    <input
+                      type="text"
+                      placeholder="Название (необязательно)"
+                      value={newLinkTitle}
+                      onChange={(e) => setNewLinkTitle(e.target.value)}
+                    />
+                    <div className="link-form-buttons">
+                      <button type="button" onClick={() => setShowLinkForm(false)}>
+                        Отмена
+                      </button>
+                      <button type="submit" disabled={addingLink}>
+                        {addingLink ? '...' : 'Добавить'}
+                      </button>
+                    </div>
+                  </form>
+                </>
               )}
-            </>
+            </div>
           )}
         </div>
       </td>
@@ -231,7 +223,7 @@ const EventRow: FC<EventRowProps> = ({
       <ConfirmDialog
         isOpen={deletePhotoTarget !== null}
         title="Удалить фото?"
-        message={`Вы уверены, что хотите удалить фото "${deletePhotoTarget?.filename || ''}"?`}
+        message="Вы уверены, что хотите удалить это фото?"
         onConfirm={() => {
           if (deletePhotoTarget) {
             onDeletePhoto(event.id, deletePhotoTarget.id);
@@ -256,6 +248,8 @@ const EventRow: FC<EventRowProps> = ({
       />
     </tr>
   );
-};
+});
+
+EventRow.displayName = 'EventRow';
 
 export default EventRow;

@@ -34,7 +34,7 @@ from ..schemas import (
     PasswordChange,
 )
 from .deps import CurrentAdmin, DbSession
-from ..services.excel_import import import_excel
+from ..services.excel_import import import_excel, preview_excel
 from ..services.excel_export import export_excel
 
 router = APIRouter(prefix="/admin", tags=["admin"])
@@ -273,11 +273,58 @@ async def delete_category(
     await db.delete(category)
 
 
+@router.post("/import/preview")
+async def preview_import(
+    admin: CurrentAdmin,
+    file: UploadFile = File(...),
+) -> dict:
+    """
+    Preview an Excel file before importing.
+
+    Parses the uploaded Excel file and returns statistics about what would be imported,
+    without modifying the database. Shows category/event counts and any warnings.
+
+    Args:
+        file: Uploaded Excel file (.xlsx, .xls).
+        admin: Authenticated admin user (from dependency).
+
+    Returns:
+        Dictionary with preview statistics: categories_count, events_count,
+        months_found, and warnings list.
+
+    Raises:
+        HTTPException: 400 if file format is invalid.
+    """
+    # Validate file extension
+    if not file.filename:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="No filename provided"
+        )
+
+    allowed_extensions = {".xlsx", ".xls"}
+    file_ext = Path(file.filename).suffix.lower()
+    if file_ext not in allowed_extensions:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Invalid file format. Allowed: {', '.join(allowed_extensions)}"
+        )
+
+    try:
+        result = await preview_excel(file)
+        return result
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Failed to parse Excel file: {str(e)}"
+        )
+
+
 @router.post("/import")
 async def import_excel_file(
+    db: DbSession,
+    admin: CurrentAdmin,
     file: UploadFile = File(...),
-    admin: CurrentAdmin = None,
-    db: DbSession = None,
 ) -> dict:
     """
     Import events from an Excel file.
