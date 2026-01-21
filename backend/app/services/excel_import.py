@@ -102,13 +102,14 @@ def _is_category_row(ws, row_idx, merged_values) -> bool:
     Determine if a row is a category header.
 
     Category row criteria:
-    - Cell A has yellow background (00FFF2CC)
+    - Cell A has yellow background (FFF2CC - ignoring alpha prefix)
     - Column A contains non-numeric text
     - Columns C, D, E are empty
     - Row may be merged (optional, supportive)
     """
     color = _get_cell_background_color(ws, row_idx, 1)
-    if color != "00FFF2CC":
+    # Check for yellow color FFF2CC, ignoring alpha prefix (00 or FF)
+    if not color or not color.endswith("FFF2CC"):
         return False
 
     col_a = get_cell_value(ws, row_idx, 1, merged_values)
