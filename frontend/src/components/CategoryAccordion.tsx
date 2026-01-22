@@ -3,6 +3,12 @@ import { CategoryWithEvents } from '../api/types';
 import EventsTable from './EventsTable';
 import '../styles/components/CategoryAccordion.css';
 
+const MONTH_NAMES = [
+  '', 'Январь', 'Февраль', 'Март', 'Апрель',
+  'Май', 'Июнь', 'Июль', 'Август',
+  'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'
+];
+
 interface CategoryAccordionProps {
   category: CategoryWithEvents;
   defaultExpanded?: boolean;
@@ -14,6 +20,8 @@ interface CategoryAccordionProps {
   canEdit: boolean;
   /** Optional render function for custom content (e.g., mobile card view) */
   renderContent?: () => ReactNode;
+  /** Show month badge in header (for all-year view) */
+  showMonth?: boolean;
 }
 
 const CategoryAccordion: FC<CategoryAccordionProps> = ({
@@ -25,7 +33,8 @@ const CategoryAccordion: FC<CategoryAccordionProps> = ({
   onUploadPhoto,
   onDeletePhoto,
   canEdit,
-  renderContent
+  renderContent,
+  showMonth = false
 }) => {
   const [expanded, setExpanded] = useState(defaultExpanded);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -70,6 +79,11 @@ const CategoryAccordion: FC<CategoryAccordionProps> = ({
             <path d="M4.5 2L9 6L4.5 10" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </span>
+        {showMonth && category.month && (
+          <span className={`${blockClass}__month-badge`}>
+            {MONTH_NAMES[category.month]}
+          </span>
+        )}
         <span className={`${blockClass}__name`}>{category.name}</span>
         <span className={`${blockClass}__count`}>({category.events.length})</span>
       </button>
