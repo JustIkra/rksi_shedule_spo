@@ -159,20 +159,19 @@ function EventsPage() {
         onMonthChange={setSelectedMonth}
       />
 
-      <div className="events-page__toolbar">
-        <SearchInput
-          value={searchQuery}
-          onChange={setSearchQuery}
-          placeholder="Поиск по названию, организации, месту..."
-        />
-        {searchQuery && !loading && (
-          <span className="events-page__search-results">
-            Найдено: {matchingEventsCount}
-          </span>
-        )}
-      </div>
-
       <main className="events-page__content">
+        <div className="events-page__toolbar">
+          <SearchInput
+            value={searchQuery}
+            onChange={setSearchQuery}
+            placeholder="Поиск по названию, организации, месту..."
+          />
+          {searchQuery && !loading && (
+            <span className="events-page__search-results">
+              Найдено: {matchingEventsCount}
+            </span>
+          )}
+        </div>
         {loading && (
           <div className="events-page__loading">
             <div className="events-page__loading-spinner" />

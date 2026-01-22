@@ -30,29 +30,31 @@ const MonthTabs: FC<MonthTabsProps> = ({ selectedMonth, onMonthChange }) => {
   return (
     <>
       {/* Desktop: Horizontal scrollable tabs */}
-      <div
-        className="month-tabs"
-        role="tablist"
-        aria-label="Выбор месяца"
-      >
-        {TABS.map(({ value, label }) => {
-          const isActive = selectedMonth === value;
-          const isAllYear = value === 0;
+      <div className="month-tabs-wrapper">
+        <div
+          className="month-tabs"
+          role="tablist"
+          aria-label="Выбор месяца"
+        >
+          {TABS.map(({ value, label }) => {
+            const isActive = selectedMonth === value;
+            const isAllYear = value === 0;
 
-          return (
-            <button
-              key={value}
-              role="tab"
-              aria-selected={isActive}
-              aria-controls={`month-panel-${value}`}
-              tabIndex={isActive ? 0 : -1}
-              className={`month-tabs__tab ${isActive ? 'month-tabs__tab--active' : ''} ${isAllYear ? 'month-tabs__tab--all-year' : ''}`}
-              onClick={() => onMonthChange(value)}
-            >
-              {label}
-            </button>
-          );
-        })}
+            return (
+              <button
+                key={value}
+                role="tab"
+                aria-selected={isActive}
+                aria-controls={`month-panel-${value}`}
+                tabIndex={isActive ? 0 : -1}
+                className={`month-tabs__tab ${isActive ? 'month-tabs__tab--active' : ''} ${isAllYear ? 'month-tabs__tab--all-year' : ''}`}
+                onClick={() => onMonthChange(value)}
+              >
+                {label}
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       {/* Mobile: Native select dropdown */}

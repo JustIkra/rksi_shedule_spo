@@ -108,9 +108,9 @@
      GRID SYSTEM
      =========================================== */
   /* Container */
-  --container-max: 1400px;
+  --container-max: 1600px;
   --container-narrow: 960px;
-  --container-wide: 1600px;
+  --container-wide: 1800px;
 
   /* Padding - responsive via media queries */
   --container-gutter: var(--space-4);
@@ -119,6 +119,11 @@
   --grid-columns: 12;
   --grid-gap: var(--space-5);
   --grid-gap-sm: var(--space-4);
+
+  /* Column offset - start from column 2 (skip 1 column = 1/12) */
+  --grid-column-offset: calc(100% / 12);
+  /* Content spans 10 columns (from 2 to 11, leaving 1 column on each side) */
+  --grid-content-span: calc(100% * 10 / 12);
 
   /* Content widths */
   --content-width: 720px;
@@ -190,13 +195,13 @@
 /* Desktop (1024px+) */
 @media (min-width: 1024px) {
   :root {
-    --container-gutter: var(--space-8);
+    --container-gutter: var(--space-6);
   }
 }
 
 /* Large Desktop (1400px+) */
 @media (min-width: 1400px) {
   :root {
-    --container-gutter: var(--space-10);
+    --container-gutter: var(--space-6);
   }
 }
