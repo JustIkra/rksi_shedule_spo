@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { useIsMobile } from '../hooks/useMediaQuery';
 import { eventsApi } from '../api/events';
-import { CategoryWithEvents, EventWithRelations } from '../api/types';
+import { CategoryWithEvents, EventWithRelations, Photo } from '../api/types';
 import MonthTabs from '../components/MonthTabs';
 import SearchInput from '../components/SearchInput';
 import CategoryAccordion from '../components/CategoryAccordion';
@@ -121,6 +121,17 @@ function EventsPage() {
     }
   };
 
+  const handlePhotosAdded = (eventId: number, newPhotos: Photo[]) => {
+    setCategories(prev => prev.map(cat => ({
+      ...cat,
+      events: cat.events.map(event =>
+        event.id === eventId
+          ? { ...event, photos: [...event.photos, ...newPhotos] }
+          : event
+      )
+    })));
+  };
+
   const handleDeletePhoto = async (eventId: number, photoId: number) => {
     await eventsApi.deletePhoto(eventId, photoId);
     setCategories(prev => prev.map(cat => ({
@@ -223,6 +234,7 @@ function EventsPage() {
                     onAddLink={handleAddLink}
                     onDeleteLink={handleDeleteLink}
                     onUploadPhoto={handleUploadPhoto}
+                    onPhotosAdded={handlePhotosAdded}
                     onDeletePhoto={handleDeletePhoto}
                     canEdit={canEdit}
                     showMonth={isAllYear}
@@ -236,6 +248,7 @@ function EventsPage() {
                             onAddLink={handleAddLink}
                             onDeleteLink={handleDeleteLink}
                             onUploadPhoto={handleUploadPhoto}
+                            onPhotosAdded={handlePhotosAdded}
                             onDeletePhoto={handleDeletePhoto}
                             canEdit={canEdit}
                           />
@@ -255,6 +268,7 @@ function EventsPage() {
                   onAddLink={handleAddLink}
                   onDeleteLink={handleDeleteLink}
                   onUploadPhoto={handleUploadPhoto}
+                  onPhotosAdded={handlePhotosAdded}
                   onDeletePhoto={handleDeletePhoto}
                   canEdit={canEdit}
                   showMonth={isAllYear}

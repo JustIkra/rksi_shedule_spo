@@ -1,5 +1,5 @@
 import { FC, useState, useId, useRef, useEffect, ReactNode } from 'react';
-import { CategoryWithEvents } from '../api/types';
+import { CategoryWithEvents, Photo } from '../api/types';
 import EventsTable from './EventsTable';
 import '../styles/components/CategoryAccordion.css';
 
@@ -16,6 +16,7 @@ interface CategoryAccordionProps {
   onAddLink: (eventId: number, url: string, title: string) => Promise<void>;
   onDeleteLink: (eventId: number, linkId: number) => Promise<void>;
   onUploadPhoto: (eventId: number, file: File) => Promise<void>;
+  onPhotosAdded?: (eventId: number, photos: Photo[]) => void;
   onDeletePhoto: (eventId: number, photoId: number) => Promise<void>;
   canEdit: boolean;
   /** Optional render function for custom content (e.g., mobile card view) */
@@ -31,6 +32,7 @@ const CategoryAccordion: FC<CategoryAccordionProps> = ({
   onAddLink,
   onDeleteLink,
   onUploadPhoto,
+  onPhotosAdded,
   onDeletePhoto,
   canEdit,
   renderContent,
@@ -106,6 +108,7 @@ const CategoryAccordion: FC<CategoryAccordionProps> = ({
               onAddLink={onAddLink}
               onDeleteLink={onDeleteLink}
               onUploadPhoto={onUploadPhoto}
+              onPhotosAdded={onPhotosAdded}
               onDeletePhoto={onDeletePhoto}
               canEdit={canEdit}
             />

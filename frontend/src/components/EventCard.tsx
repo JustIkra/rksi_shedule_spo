@@ -1,8 +1,9 @@
-import { FC, useState, useRef, memo } from 'react';
+import { FC, useState, memo } from 'react';
 import { EventWithRelations, Link, Photo } from '../api/types';
 import EditableDescription from './EditableDescription';
 import Lightbox from './Lightbox';
 import ConfirmDialog from './ConfirmDialog';
+import PhotoUploadModal from './PhotoUploadModal';
 import '../styles/components/EventCard.css';
 
 interface EventCardProps {
@@ -11,6 +12,7 @@ interface EventCardProps {
   onAddLink: (eventId: number, url: string, title: string) => Promise<void>;
   onDeleteLink: (eventId: number, linkId: number) => Promise<void>;
   onUploadPhoto: (eventId: number, file: File) => Promise<void>;
+  onPhotosAdded?: (eventId: number, photos: Photo[]) => void;
   onDeletePhoto: (eventId: number, photoId: number) => Promise<void>;
   canEdit: boolean;
 }
@@ -20,7 +22,9 @@ const EventCard: FC<EventCardProps> = memo(({
   onUpdateDescription,
   onAddLink,
   onDeleteLink,
-  onUploadPhoto,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  onUploadPhoto: _onUploadPhoto,
+  onPhotosAdded,
   onDeletePhoto,
   canEdit
 }) => {
@@ -29,7 +33,7 @@ const EventCard: FC<EventCardProps> = memo(({
   const [newLinkUrl, setNewLinkUrl] = useState('');
   const [newLinkTitle, setNewLinkTitle] = useState('');
   const [addingLink, setAddingLink] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [showUploadModal, setShowUploadModal] = useState(false);
 
   // Lightbox state
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
@@ -55,18 +59,9 @@ const EventCard: FC<EventCardProps> = memo(({
     }
   };
 
-  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    try {
-      await onUploadPhoto(event.id, file);
-    } catch (error) {
-      console.error('Failed to upload photo:', error);
-    }
-
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
+  const handlePhotosUploaded = (photos: Photo[]) => {
+    if (onPhotosAdded) {
+      onPhotosAdded(event.id, photos);
     }
   };
 
@@ -233,22 +228,13 @@ const EventCard: FC<EventCardProps> = memo(({
               )}
 
               {canEdit && (
-                <>
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    accept="image/*"
-                    onChange={handleFileSelect}
-                    style={{ display: 'none' }}
-                  />
-                  <button
-                    className="event-card__add-photo-btn"
-                    onClick={() => fileInputRef.current?.click()}
-                    aria-label="Загрузить фото"
-                  >
-                    +
-                  </button>
-                </>
+                <button
+                  className="event-card__add-photo-btn"
+                  onClick={() => setShowUploadModal(true)}
+                  aria-label="Загрузить фото"
+                >
+                  +
+                </button>
               )}
             </div>
           </div>
@@ -311,6 +297,14 @@ const EventCard: FC<EventCardProps> = memo(({
           setDeleteLinkTarget(null);
         }}
         onCancel={() => setDeleteLinkTarget(null)}
+      />
+
+      {/* Photo upload modal */}
+      <PhotoUploadModal
+        eventId={event.id}
+        isOpen={showUploadModal}
+        onClose={() => setShowUploadModal(false)}
+        onUploadComplete={handlePhotosUploaded}
       />
     </article>
   );

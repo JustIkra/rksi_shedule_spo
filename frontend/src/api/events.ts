@@ -35,6 +35,21 @@ export const eventsApi = {
     });
   },
 
+  // Загрузить фото с отслеживанием прогресса
+  uploadPhotoWithProgress: (eventId: number, file: File, onProgress: (percent: number) => void) => {
+    const formData = new FormData();
+    formData.append('files', file);
+    return api.post<{ photos: Photo[]; errors: string[] }>(`/photos/events/${eventId}/photos`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+      onUploadProgress: (progressEvent) => {
+        if (progressEvent.total) {
+          const percent = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+          onProgress(percent);
+        }
+      }
+    });
+  },
+
   // Удалить фото
   deletePhoto: (_eventId: number, photoId: number) =>
     api.delete(`/photos/${photoId}`),

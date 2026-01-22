@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { EventWithRelations } from '../api/types';
+import { EventWithRelations, Photo } from '../api/types';
 import EventRow from './EventRow';
 import '../styles/components/EventsTable.css';
 
@@ -9,6 +9,7 @@ interface EventsTableProps {
   onAddLink: (eventId: number, url: string, title: string) => Promise<void>;
   onDeleteLink: (eventId: number, linkId: number) => Promise<void>;
   onUploadPhoto: (eventId: number, file: File) => Promise<void>;
+  onPhotosAdded?: (eventId: number, photos: Photo[]) => void;
   onDeletePhoto: (eventId: number, photoId: number) => Promise<void>;
   canEdit: boolean;
 }
@@ -19,6 +20,7 @@ const EventsTable: FC<EventsTableProps> = ({
   onAddLink,
   onDeleteLink,
   onUploadPhoto,
+  onPhotosAdded,
   onDeletePhoto,
   canEdit
 }) => {
@@ -48,6 +50,7 @@ const EventsTable: FC<EventsTableProps> = ({
             onAddLink={onAddLink}
             onDeleteLink={onDeleteLink}
             onUploadPhoto={onUploadPhoto}
+            onPhotosAdded={onPhotosAdded}
             onDeletePhoto={onDeletePhoto}
             canEdit={canEdit}
           />

@@ -1,0 +1,296 @@
+/**
+ * PhotoUploadModal Styles
+ * Modal window for photo upload with progress bar
+ */
+
+.photo-upload-modal__overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: var(--space-4);
+  animation: photo-upload-modal-fade-in 0.2s ease;
+}
+
+@keyframes photo-upload-modal-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.photo-upload-modal {
+  background: var(--color-paper);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-xl);
+  width: 100%;
+  max-width: 420px;
+  padding: var(--space-6);
+  position: relative;
+  animation: photo-upload-modal-slide-up 0.25s var(--ease-out);
+}
+
+@keyframes photo-upload-modal-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.photo-upload-modal__close {
+  position: absolute;
+  top: var(--space-4);
+  right: var(--space-4);
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: var(--color-paper-muted);
+  border-radius: var(--radius-full);
+  font-size: 24px;
+  line-height: 1;
+  color: var(--color-ink-muted);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.photo-upload-modal__close:hover:not(:disabled) {
+  background: var(--color-paper-dark);
+  color: var(--color-ink);
+}
+
+.photo-upload-modal__close:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.photo-upload-modal__title {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-weight: 600;
+  color: var(--color-ink);
+  margin: 0 0 var(--space-5) 0;
+  padding-right: var(--space-8);
+}
+
+/* Dropzone */
+.photo-upload-modal__dropzone {
+  border: 2px dashed var(--color-rule);
+  border-radius: var(--radius-lg);
+  padding: var(--space-8) var(--space-5);
+  text-align: center;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  background: var(--color-paper-warm);
+  min-height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.photo-upload-modal__dropzone:hover {
+  border-color: var(--color-primary-light);
+  background: var(--color-primary-muted);
+}
+
+.photo-upload-modal__dropzone--dragging {
+  border-color: var(--color-primary);
+  background: var(--color-primary-muted);
+  border-style: solid;
+}
+
+.photo-upload-modal__dropzone--has-file {
+  padding: var(--space-4);
+  cursor: default;
+}
+
+.photo-upload-modal__placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.photo-upload-modal__icon {
+  color: var(--color-ink-muted);
+}
+
+.photo-upload-modal__hint {
+  font-size: var(--text-sm);
+  color: var(--color-ink-secondary);
+  margin: 0;
+}
+
+.photo-upload-modal__formats {
+  font-size: var(--text-xs);
+  color: var(--color-ink-muted);
+  margin: 0;
+}
+
+/* Preview */
+.photo-upload-modal__preview {
+  position: relative;
+  width: 100%;
+  max-height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.photo-upload-modal__preview img {
+  max-width: 100%;
+  max-height: 280px;
+  border-radius: var(--radius-md);
+  object-fit: contain;
+}
+
+.photo-upload-modal__remove {
+  position: absolute;
+  top: var(--space-2);
+  right: var(--space-2);
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: var(--radius-full);
+  color: white;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background var(--transition-fast);
+}
+
+.photo-upload-modal__remove:hover {
+  background: rgba(0, 0, 0, 0.8);
+}
+
+/* Progress Bar */
+.photo-upload-modal__progress {
+  margin-top: var(--space-4);
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.photo-upload-modal__progress-bar {
+  flex: 1;
+  height: 8px;
+  background: var(--color-paper-dark);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.photo-upload-modal__progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--color-primary) 0%, var(--color-primary-light) 100%);
+  border-radius: var(--radius-full);
+  transition: width 0.2s ease;
+}
+
+.photo-upload-modal__progress-text {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-ink-secondary);
+  min-width: 40px;
+  text-align: right;
+}
+
+/* Status Messages */
+.photo-upload-modal__status {
+  margin-top: var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.photo-upload-modal__status--success {
+  background: var(--color-success-bg);
+  color: var(--color-success);
+}
+
+.photo-upload-modal__status--error {
+  background: var(--color-error-bg);
+  color: var(--color-error);
+}
+
+/* Actions */
+.photo-upload-modal__actions {
+  display: flex;
+  gap: var(--space-3);
+  margin-top: var(--space-5);
+  justify-content: flex-end;
+}
+
+.photo-upload-modal__btn {
+  padding: var(--space-3) var(--space-5);
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  font-family: var(--font-body);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  border: none;
+}
+
+.photo-upload-modal__btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.photo-upload-modal__btn--secondary {
+  background: var(--color-paper-muted);
+  color: var(--color-ink-secondary);
+}
+
+.photo-upload-modal__btn--secondary:hover:not(:disabled) {
+  background: var(--color-paper-dark);
+  color: var(--color-ink);
+}
+
+.photo-upload-modal__btn--primary {
+  background: var(--color-primary);
+  color: white;
+}
+
+.photo-upload-modal__btn--primary:hover:not(:disabled) {
+  background: var(--color-primary-dark);
+}
+
+/* Mobile adjustments */
+@media (max-width: 480px) {
+  .photo-upload-modal {
+    padding: var(--space-5);
+  }
+
+  .photo-upload-modal__dropzone {
+    padding: var(--space-6) var(--space-4);
+    min-height: 160px;
+  }
+
+  .photo-upload-modal__actions {
+    flex-direction: column-reverse;
+  }
+
+  .photo-upload-modal__btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
