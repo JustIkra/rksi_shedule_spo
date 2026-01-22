@@ -1,10 +1,20 @@
 import { FC } from 'react';
 import '../styles/components/MonthTabs.css';
 
-const MONTHS = [
-  'Январь', 'Февраль', 'Март', 'Апрель',
-  'Май', 'Июнь', 'Июль', 'Август',
-  'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'
+const TABS = [
+  { value: 0, label: 'Весь год' },
+  { value: 1, label: 'Январь' },
+  { value: 2, label: 'Февраль' },
+  { value: 3, label: 'Март' },
+  { value: 4, label: 'Апрель' },
+  { value: 5, label: 'Май' },
+  { value: 6, label: 'Июнь' },
+  { value: 7, label: 'Июль' },
+  { value: 8, label: 'Август' },
+  { value: 9, label: 'Сентябрь' },
+  { value: 10, label: 'Октябрь' },
+  { value: 11, label: 'Ноябрь' },
+  { value: 12, label: 'Декабрь' },
 ];
 
 interface MonthTabsProps {
@@ -25,21 +35,21 @@ const MonthTabs: FC<MonthTabsProps> = ({ selectedMonth, onMonthChange }) => {
         role="tablist"
         aria-label="Выбор месяца"
       >
-        {MONTHS.map((name, index) => {
-          const monthNumber = index + 1;
-          const isActive = selectedMonth === monthNumber;
+        {TABS.map(({ value, label }) => {
+          const isActive = selectedMonth === value;
+          const isAllYear = value === 0;
 
           return (
             <button
-              key={monthNumber}
+              key={value}
               role="tab"
               aria-selected={isActive}
-              aria-controls={`month-panel-${monthNumber}`}
+              aria-controls={`month-panel-${value}`}
               tabIndex={isActive ? 0 : -1}
-              className={`month-tabs__tab ${isActive ? 'month-tabs__tab--active' : ''}`}
-              onClick={() => onMonthChange(monthNumber)}
+              className={`month-tabs__tab ${isActive ? 'month-tabs__tab--active' : ''} ${isAllYear ? 'month-tabs__tab--all-year' : ''}`}
+              onClick={() => onMonthChange(value)}
             >
-              {name}
+              {label}
             </button>
           );
         })}
@@ -57,14 +67,11 @@ const MonthTabs: FC<MonthTabsProps> = ({ selectedMonth, onMonthChange }) => {
           onChange={handleSelectChange}
           aria-label="Выбор месяца"
         >
-          {MONTHS.map((name, index) => {
-            const monthNumber = index + 1;
-            return (
-              <option key={monthNumber} value={monthNumber}>
-                {name}
-              </option>
-            );
-          })}
+          {TABS.map(({ value, label }) => (
+            <option key={value} value={value}>
+              {label}
+            </option>
+          ))}
         </select>
         <span className="month-select__icon" aria-hidden="true">
           <svg
