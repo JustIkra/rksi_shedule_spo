@@ -1,12 +1,25 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { useIsMobile } from '../hooks/useMediaQuery';
 import { eventsApi } from '../api/events';
-import { CategoryWithEvents } from '../api/types';
+import { CategoryWithEvents, EventWithRelations } from '../api/types';
 import MonthTabs from '../components/MonthTabs';
+import SearchInput from '../components/SearchInput';
 import CategoryAccordion from '../components/CategoryAccordion';
 import EventCard from '../components/EventCard';
 import '../styles/pages/EventsPage.css';
+
+// Helper to check if event matches search query
+function eventMatchesSearch(event: EventWithRelations, query: string): boolean {
+  const searchLower = query.toLowerCase();
+  return (
+    event.name.toLowerCase().includes(searchLower) ||
+    (event.responsible?.toLowerCase().includes(searchLower) ?? false) ||
+    (event.location?.toLowerCase().includes(searchLower) ?? false) ||
+    (event.description?.toLowerCase().includes(searchLower) ?? false) ||
+    (event.event_date?.toLowerCase().includes(searchLower) ?? false)
+  );
+}
 
 function EventsPage() {
   const { isAuthenticated } = useAuth();
@@ -15,13 +28,16 @@ function EventsPage() {
   const [categories, setCategories] = useState<CategoryWithEvents[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
 
-  // Загрузка данных при смене месяца
+  // Load events based on selected month (0 = all year)
   const loadEvents = useCallback(async (month: number) => {
     setLoading(true);
     setError(null);
     try {
-      const response = await eventsApi.getByMonth(month);
+      const response = month === 0
+        ? await eventsApi.getAll()
+        : await eventsApi.getByMonth(month);
       setCategories(response.data);
     } catch (err) {
       console.error('Failed to load events:', err);
@@ -35,10 +51,28 @@ function EventsPage() {
     loadEvents(selectedMonth);
   }, [selectedMonth, loadEvents]);
 
-  // Обработчики для EventRow
+  // Filter categories and events based on search query
+  const filteredCategories = useMemo(() => {
+    if (!searchQuery.trim()) {
+      return categories;
+    }
+
+    return categories
+      .map(category => ({
+        ...category,
+        events: category.events.filter(event => eventMatchesSearch(event, searchQuery)),
+      }))
+      .filter(category => category.events.length > 0);
+  }, [categories, searchQuery]);
+
+  // Count total matching events
+  const matchingEventsCount = useMemo(() => {
+    return filteredCategories.reduce((sum, cat) => sum + cat.events.length, 0);
+  }, [filteredCategories]);
+
+  // Handlers for EventRow
   const handleUpdateDescription = async (eventId: number, description: string | null) => {
     await eventsApi.updateDescription(eventId, description);
-    // Обновляем локальный стейт
     setCategories(prev => prev.map(cat => ({
       ...cat,
       events: cat.events.map(event =>
@@ -50,7 +84,6 @@ function EventsPage() {
   const handleAddLink = async (eventId: number, url: string, title: string) => {
     const response = await eventsApi.addLink(eventId, { url, title });
     const newLink = response.data;
-    // Обновляем локальный стейт
     setCategories(prev => prev.map(cat => ({
       ...cat,
       events: cat.events.map(event =>
@@ -63,7 +96,6 @@ function EventsPage() {
 
   const handleDeleteLink = async (eventId: number, linkId: number) => {
     await eventsApi.deleteLink(eventId, linkId);
-    // Обновляем локальный стейт
     setCategories(prev => prev.map(cat => ({
       ...cat,
       events: cat.events.map(event =>
@@ -77,7 +109,6 @@ function EventsPage() {
   const handleUploadPhoto = async (eventId: number, file: File) => {
     const response = await eventsApi.uploadPhoto(eventId, file);
     const { photos: newPhotos } = response.data;
-    // Обновляем локальный стейт
     if (newPhotos && newPhotos.length > 0) {
       setCategories(prev => prev.map(cat => ({
         ...cat,
@@ -92,7 +123,6 @@ function EventsPage() {
 
   const handleDeletePhoto = async (eventId: number, photoId: number) => {
     await eventsApi.deletePhoto(eventId, photoId);
-    // Обновляем локальный стейт
     setCategories(prev => prev.map(cat => ({
       ...cat,
       events: cat.events.map(event =>
@@ -103,13 +133,10 @@ function EventsPage() {
     })));
   };
 
-  // Пользователь может редактировать если он авторизован
   const canEdit = isAuthenticated === true;
-
-  // Page title based on viewport
   const pageTitle = isMobile ? 'План 2026' : 'План мероприятий СПО РО 2026';
+  const isAllYear = selectedMonth === 0;
 
-  // Показываем загрузку только при первичной загрузке
   if (isAuthenticated === null) {
     return (
       <div className="events-page">
@@ -132,6 +159,19 @@ function EventsPage() {
         onMonthChange={setSelectedMonth}
       />
 
+      <div className="events-page__toolbar">
+        <SearchInput
+          value={searchQuery}
+          onChange={setSearchQuery}
+          placeholder="Поиск по названию, организации, месту..."
+        />
+        {searchQuery && !loading && (
+          <span className="events-page__search-results">
+            Найдено: {matchingEventsCount}
+          </span>
+        )}
+      </div>
+
       <main className="events-page__content">
         {loading && (
           <div className="events-page__loading">
@@ -152,17 +192,30 @@ function EventsPage() {
           </div>
         )}
 
-        {!loading && !error && categories.length === 0 && (
+        {!loading && !error && filteredCategories.length === 0 && (
           <div className="events-page__empty">
-            <p className="events-page__empty-text">Нет мероприятий в этом месяце</p>
+            <p className="events-page__empty-text">
+              {searchQuery
+                ? 'Ничего не найдено по вашему запросу'
+                : isAllYear
+                  ? 'Нет мероприятий за год'
+                  : 'Нет мероприятий в этом месяце'}
+            </p>
+            {searchQuery && (
+              <button
+                className="events-page__empty-clear"
+                onClick={() => setSearchQuery('')}
+              >
+                Сбросить поиск
+              </button>
+            )}
           </div>
         )}
 
         {!loading && !error && (
           <div className="events-page__categories">
             {isMobile ? (
-              // Mobile view: render EventCards grouped by category
-              categories.map(category => (
+              filteredCategories.map(category => (
                 <div key={category.id} className="events-page__category-section">
                   <CategoryAccordion
                     category={category}
@@ -173,6 +226,7 @@ function EventsPage() {
                     onUploadPhoto={handleUploadPhoto}
                     onDeletePhoto={handleDeletePhoto}
                     canEdit={canEdit}
+                    showMonth={isAllYear}
                     renderContent={() => (
                       <div className="events-page__cards">
                         {category.events.map(event => (
@@ -193,8 +247,7 @@ function EventsPage() {
                 </div>
               ))
             ) : (
-              // Desktop view: render CategoryAccordion with EventsTable
-              categories.map(category => (
+              filteredCategories.map(category => (
                 <CategoryAccordion
                   key={category.id}
                   category={category}
@@ -205,6 +258,7 @@ function EventsPage() {
                   onUploadPhoto={handleUploadPhoto}
                   onDeletePhoto={handleDeletePhoto}
                   canEdit={canEdit}
+                  showMonth={isAllYear}
                 />
               ))
             )}
@@ -215,4 +269,4 @@ function EventsPage() {
   );
 }
 
-export default EventsPage
+export default EventsPage;
