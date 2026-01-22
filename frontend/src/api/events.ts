@@ -6,6 +6,10 @@ export const eventsApi = {
   getByMonth: (month: number) =>
     api.get<CategoryWithEvents[]>('/events/', { params: { month } }),
 
+  // Получить все мероприятия за год
+  getAll: () =>
+    api.get<CategoryWithEvents[]>('/events/all'),
+
   // Получить мероприятие по ID
   getById: (id: number) =>
     api.get<EventWithRelations>(`/events/${id}`),

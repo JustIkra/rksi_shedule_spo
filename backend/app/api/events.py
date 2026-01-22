@@ -81,6 +81,52 @@ async def get_events_by_month(
 
 
 @router.get(
+    "/all",
+    response_model=list[CategoryWithEvents],
+    summary="Get all events for the year",
+    description="Returns all categories with their events for the entire year. "
+    "Categories are sorted by month first, then by sort_order within each month.",
+)
+async def get_all_events(
+    db: DbSession,
+) -> list[CategoryWithEvents]:
+    """
+    Get all events for the entire year, grouped by categories.
+
+    Returns:
+        List of categories with their events, including links and photos for each event.
+    """
+    stmt = (
+        select(Category)
+        .options(
+            selectinload(Category.events).selectinload(Event.links),
+            selectinload(Category.events).selectinload(Event.photos),
+        )
+        .order_by(Category.month, Category.sort_order)
+    )
+
+    result = await db.execute(stmt)
+    categories = result.scalars().unique().all()
+
+    response = []
+    for category in categories:
+        sorted_events = sorted(category.events, key=lambda e: e.sort_order)
+        category_data = CategoryWithEvents(
+            id=category.id,
+            name=category.name,
+            month=category.month,
+            sort_order=category.sort_order,
+            events=[
+                EventWithRelations.model_validate(event)
+                for event in sorted_events
+            ],
+        )
+        response.append(category_data)
+
+    return response
+
+
+@router.get(
     "/{event_id}",
     response_model=EventWithRelations,
     summary="Get event by ID",
