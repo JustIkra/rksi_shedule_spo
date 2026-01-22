@@ -15,7 +15,7 @@ const SearchInput: FC<SearchInputProps> = ({
   debounceMs = 300,
 }) => {
   const [localValue, setLocalValue] = useState(value);
-  const debounceRef = useRef<NodeJS.Timeout | null>(null);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Sync external value changes
   useEffect(() => {
