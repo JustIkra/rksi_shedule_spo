@@ -145,8 +145,7 @@
 }
 
 .description-cell--card .description-cell__add-btn {
-  font-size: var(--text-xs);
-  padding: var(--space-1) var(--space-2);
+  /* Same as base .description-cell__add-btn */
 }
 
 /* ===========================================

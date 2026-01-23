@@ -5,6 +5,7 @@ import Lightbox from './Lightbox';
 import ConfirmDialog from './ConfirmDialog';
 import PhotoUploadModal from './PhotoUploadModal';
 import '../styles/components/EventRow.css';
+import '../styles/components/DescriptionCell.css';
 
 interface EventRowProps {
   event: EventWithRelations;
@@ -114,7 +115,7 @@ const EventRow: FC<EventRowProps> = memo(({
 
           {canEdit && (
             <button
-              className="event-row__link-add"
+              className="description-cell__add-btn"
               onClick={() => setShowLinkForm(true)}
             >
               + Добавить
@@ -123,29 +124,31 @@ const EventRow: FC<EventRowProps> = memo(({
         </div>
       </td>
 
-      {/* Photos - Always visible */}
+      {/* Photos Gallery */}
       <td className="events-table__cell events-table__cell--photos">
-        <div className="event-row__photos">
-          {event.photos.map((photo, photoIndex) => (
-            <div key={photo.id} className="event-row__photo">
+        <div className="event-row__gallery">
+          {event.photos.length > 0 && (
+            <div
+              className="event-row__gallery-preview"
+              onClick={() => setLightboxIndex(0)}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => e.key === 'Enter' && setLightboxIndex(0)}
+              title={`Открыть галерею (${event.photos.length} фото)`}
+            >
               <img
-                src={`/uploads/${photo.thumbnail_path}`}
-                alt="Фото"
-                className="event-row__photo-thumb"
-                onClick={() => setLightboxIndex(photoIndex)}
+                src={`/uploads/${event.photos[0].thumbnail_path}`}
+                alt="Превью галереи"
+                className="event-row__gallery-image"
               />
-              {canEdit && (
-                <button
-                  className="event-row__photo-delete"
-                  onClick={() => setDeletePhotoTarget(photo)}
-                  title="Удалить фото"
-                  aria-label="Удалить фото"
-                >
-                  x
-                </button>
+              {event.photos.length > 1 && (
+                <div className="event-row__gallery-overlay">
+                  <span>+{event.photos.length - 1}</span>
+                </div>
               )}
+              <div className="event-row__gallery-badge">{event.photos.length}</div>
             </div>
-          ))}
+          )}
 
           {canEdit && (
             <button
@@ -166,6 +169,8 @@ const EventRow: FC<EventRowProps> = memo(({
           currentIndex={lightboxIndex}
           onClose={() => setLightboxIndex(null)}
           onNavigate={setLightboxIndex}
+          canDelete={canEdit}
+          onDelete={(photo) => setDeletePhotoTarget(photo)}
         />
       )}
 
@@ -176,6 +181,12 @@ const EventRow: FC<EventRowProps> = memo(({
         onConfirm={() => {
           if (deletePhotoTarget) {
             onDeletePhoto(event.id, deletePhotoTarget.id);
+            // Close lightbox if deleting the last photo or adjust index
+            if (event.photos.length <= 1) {
+              setLightboxIndex(null);
+            } else if (lightboxIndex !== null && lightboxIndex >= event.photos.length - 1) {
+              setLightboxIndex(event.photos.length - 2);
+            }
           }
           setDeletePhotoTarget(null);
         }}

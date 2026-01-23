@@ -161,7 +161,7 @@ const EventCard: FC<EventCardProps> = memo(({
                       className="event-card__add-btn"
                       onClick={() => setShowLinkForm(true)}
                     >
-                      + Добавить ссылку
+                      + Добавить
                     </button>
                   ) : (
                     <form className="event-card__link-form" onSubmit={handleAddLink}>
@@ -195,34 +195,38 @@ const EventCard: FC<EventCardProps> = memo(({
           </div>
         </div>
 
-        {/* Photos */}
+        {/* Photos Gallery */}
         <div className="event-card__row">
           <span className="event-card__icon" aria-hidden="true">&#128247;</span>
           <div className="event-card__row-content">
-            <span className="event-card__label">
-              Фото {event.photos.length > 0 && `(${event.photos.length})`}
-            </span>
-            <div className="event-card__photos">
+            <span className="event-card__label">Галерея</span>
+            <div className="event-card__gallery">
               {event.photos.length > 0 ? (
-                event.photos.map((photo, photoIndex) => (
-                  <div key={photo.id} className="event-card__photo-item">
-                    <img
-                      src={`/uploads/${photo.thumbnail_path}`}
-                      alt="Фото"
-                      className="event-card__photo-thumbnail"
-                      onClick={() => setLightboxIndex(photoIndex)}
-                    />
-                    {canEdit && (
-                      <button
-                        className="event-card__photo-delete"
-                        onClick={() => setDeletePhotoTarget(photo)}
-                        aria-label="Удалить фото"
-                      >
-                        &times;
-                      </button>
-                    )}
+                <div
+                  className="event-card__gallery-preview"
+                  onClick={() => setLightboxIndex(0)}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => e.key === 'Enter' && setLightboxIndex(0)}
+                  aria-label={`Открыть галерею (${event.photos.length} фото)`}
+                >
+                  <img
+                    src={`/uploads/${event.photos[0].thumbnail_path}`}
+                    alt="Превью галереи"
+                    className="event-card__gallery-image"
+                  />
+                  {event.photos.length > 1 && (
+                    <div className="event-card__gallery-overlay">
+                      <span className="event-card__gallery-count">
+                        +{event.photos.length - 1}
+                      </span>
+                    </div>
+                  )}
+                  <div className="event-card__gallery-badge">
+                    <span className="event-card__gallery-badge-icon">&#128247;</span>
+                    <span>{event.photos.length}</span>
                   </div>
-                ))
+                </div>
               ) : (
                 <span className="event-card__empty">Нет фото</span>
               )}
@@ -268,6 +272,8 @@ const EventCard: FC<EventCardProps> = memo(({
           currentIndex={lightboxIndex}
           onClose={() => setLightboxIndex(null)}
           onNavigate={setLightboxIndex}
+          canDelete={canEdit}
+          onDelete={(photo) => setDeletePhotoTarget(photo)}
         />
       )}
 
@@ -279,6 +285,12 @@ const EventCard: FC<EventCardProps> = memo(({
         onConfirm={() => {
           if (deletePhotoTarget) {
             onDeletePhoto(event.id, deletePhotoTarget.id);
+            // Close lightbox if deleting the last photo or adjust index
+            if (event.photos.length <= 1) {
+              setLightboxIndex(null);
+            } else if (lightboxIndex !== null && lightboxIndex >= event.photos.length - 1) {
+              setLightboxIndex(event.photos.length - 2);
+            }
           }
           setDeletePhotoTarget(null);
         }}

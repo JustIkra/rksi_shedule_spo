@@ -143,6 +143,45 @@
 }
 
 /* ===========================================
+   DELETE BUTTON
+   =========================================== */
+
+.lightbox__delete {
+  position: absolute;
+  top: var(--space-2);
+  right: calc(var(--lightbox-btn-size) * 2 + var(--space-2) * 3);
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--lightbox-btn-size);
+  height: var(--lightbox-btn-size);
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-md);
+  background-color: rgba(220, 53, 69, 0.8);
+  color: var(--lightbox-btn-color);
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.lightbox__delete:hover,
+.lightbox__delete:focus-visible {
+  background-color: rgba(220, 53, 69, 1);
+}
+
+.lightbox__delete:focus-visible {
+  outline: 2px solid var(--lightbox-btn-color);
+  outline-offset: 2px;
+}
+
+.lightbox__delete svg {
+  width: 24px;
+  height: 24px;
+}
+
+/* ===========================================
    NAVIGATION
    =========================================== */
 
@@ -248,6 +287,13 @@
     height: var(--lightbox-btn-size-desktop);
   }
 
+  .lightbox__delete {
+    top: var(--space-4);
+    right: calc(var(--lightbox-btn-size-desktop) * 2 + var(--space-4) + var(--space-2) * 2);
+    width: var(--lightbox-btn-size-desktop);
+    height: var(--lightbox-btn-size-desktop);
+  }
+
   .lightbox__nav {
     width: var(--lightbox-nav-width-desktop);
     max-height: 120px;
@@ -300,6 +346,7 @@
 @media (prefers-reduced-motion: reduce) {
   .lightbox__close,
   .lightbox__download,
+  .lightbox__delete,
   .lightbox__nav {
     transition: none;
   }
@@ -316,6 +363,7 @@
 
   .lightbox__close,
   .lightbox__download,
+  .lightbox__delete,
   .lightbox__nav {
     min-width: 48px;
     min-height: 48px;

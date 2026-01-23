@@ -1,5 +1,5 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
-import { eventsApi } from '../api/events';
+import { photosApi } from '../api/photos';
 import { Photo } from '../api/types';
 import '../styles/components/PhotoUploadModal.css';
 
@@ -12,6 +12,12 @@ interface PhotoUploadModalProps {
 
 type UploadStatus = 'idle' | 'uploading' | 'success' | 'error';
 
+interface FileWithPreview {
+  file: File;
+  preview: string;
+  id: string;
+}
+
 const ALLOWED_TYPES = ['image/jpeg', 'image/png'];
 
 const PhotoUploadModal: React.FC<PhotoUploadModalProps> = ({
@@ -20,32 +26,31 @@ const PhotoUploadModal: React.FC<PhotoUploadModalProps> = ({
   onClose,
   onUploadComplete,
 }) => {
-  const [file, setFile] = useState<File | null>(null);
-  const [preview, setPreview] = useState<string | null>(null);
+  const [files, setFiles] = useState<FileWithPreview[]>([]);
   const [progress, setProgress] = useState(0);
   const [status, setStatus] = useState<UploadStatus>('idle');
   const [error, setError] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Cleanup preview URL on unmount or file change
+  // Cleanup preview URLs on unmount or files change
   useEffect(() => {
     return () => {
-      if (preview) {
-        URL.revokeObjectURL(preview);
-      }
+      files.forEach(f => URL.revokeObjectURL(f.preview));
     };
-  }, [preview]);
+  }, [files]);
 
   // Reset state when modal opens
   useEffect(() => {
     if (isOpen) {
-      setFile(null);
-      setPreview(null);
+      // Cleanup old previews
+      files.forEach(f => URL.revokeObjectURL(f.preview));
+      setFiles([]);
       setProgress(0);
       setStatus('idle');
       setError(null);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
 
   const validateFile = (file: File): string | null => {
@@ -55,25 +60,38 @@ const PhotoUploadModal: React.FC<PhotoUploadModalProps> = ({
     return null;
   };
 
-  const handleFileSelect = useCallback((selectedFile: File) => {
-    const validationError = validateFile(selectedFile);
-    if (validationError) {
-      setError(validationError);
-      return;
+  const handleFilesSelect = useCallback((selectedFiles: File[]) => {
+    const validFiles: FileWithPreview[] = [];
+    const errors: string[] = [];
+
+    selectedFiles.forEach(file => {
+      const validationError = validateFile(file);
+      if (validationError) {
+        errors.push(`${file.name}: ${validationError}`);
+      } else {
+        validFiles.push({
+          file,
+          preview: URL.createObjectURL(file),
+          id: `${file.name}-${Date.now()}-${Math.random()}`,
+        });
+      }
+    });
+
+    if (errors.length > 0) {
+      setError(errors.join('; '));
+    } else {
+      setError(null);
     }
 
-    setFile(selectedFile);
-    setError(null);
-
-    // Create preview
-    const previewUrl = URL.createObjectURL(selectedFile);
-    setPreview(previewUrl);
+    if (validFiles.length > 0) {
+      setFiles(prev => [...prev, ...validFiles]);
+    }
   }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFile = e.target.files?.[0];
-    if (selectedFile) {
-      handleFileSelect(selectedFile);
+    const selectedFiles = e.target.files;
+    if (selectedFiles && selectedFiles.length > 0) {
+      handleFilesSelect(Array.from(selectedFiles));
     }
     e.target.value = '';
   };
@@ -100,30 +118,44 @@ const PhotoUploadModal: React.FC<PhotoUploadModalProps> = ({
     e.stopPropagation();
     setIsDragging(false);
 
-    const droppedFile = e.dataTransfer.files[0];
-    if (droppedFile) {
-      handleFileSelect(droppedFile);
+    const droppedFiles = e.dataTransfer.files;
+    if (droppedFiles && droppedFiles.length > 0) {
+      handleFilesSelect(Array.from(droppedFiles));
     }
   };
 
+  const removeFile = (id: string) => {
+    setFiles(prev => {
+      const fileToRemove = prev.find(f => f.id === id);
+      if (fileToRemove) {
+        URL.revokeObjectURL(fileToRemove.preview);
+      }
+      return prev.filter(f => f.id !== id);
+    });
+  };
+
   const handleUpload = async () => {
-    if (!file) return;
+    if (files.length === 0) return;
 
     setStatus('uploading');
     setProgress(0);
     setError(null);
 
     try {
-      const response = await eventsApi.uploadPhotoWithProgress(eventId, file, (percent) => {
+      // Create FileList-like object for batch upload
+      const dataTransfer = new DataTransfer();
+      files.forEach(f => dataTransfer.items.add(f.file));
+      const fileList = dataTransfer.files;
+
+      const response = await photosApi.upload(eventId, fileList, (percent) => {
         setProgress(percent);
       });
 
       const { photos, errors } = response.data;
 
       if (errors && errors.length > 0) {
-        setStatus('error');
-        setError(errors[0]);
-        return;
+        // Show errors but also process successful uploads
+        setError(errors.join('; '));
       }
 
       if (photos && photos.length > 0) {
@@ -135,6 +167,9 @@ const PhotoUploadModal: React.FC<PhotoUploadModalProps> = ({
           onUploadComplete(photos);
           onClose();
         }, 500);
+      } else if (errors && errors.length > 0) {
+        // Only errors, no successful uploads
+        setStatus('error');
       }
     } catch (err) {
       setStatus('error');
@@ -170,62 +205,67 @@ const PhotoUploadModal: React.FC<PhotoUploadModalProps> = ({
 
         <h2 className="photo-upload-modal__title">Загрузить фото</h2>
 
-        {/* Drop Zone / Preview */}
+        {/* Drop Zone */}
         <div
-          className={`photo-upload-modal__dropzone ${isDragging ? 'photo-upload-modal__dropzone--dragging' : ''} ${file ? 'photo-upload-modal__dropzone--has-file' : ''}`}
+          className={`photo-upload-modal__dropzone ${isDragging ? 'photo-upload-modal__dropzone--dragging' : ''} ${files.length > 0 ? 'photo-upload-modal__dropzone--has-file' : ''}`}
           onDragEnter={handleDragEnter}
           onDragLeave={handleDragLeave}
           onDragOver={handleDragOver}
           onDrop={handleDrop}
-          onClick={() => !file && fileInputRef.current?.click()}
+          onClick={() => fileInputRef.current?.click()}
         >
           <input
             ref={fileInputRef}
             type="file"
             accept="image/jpeg,image/png"
+            multiple
             onChange={handleInputChange}
             hidden
           />
 
-          {file && preview ? (
-            <div className="photo-upload-modal__preview">
-              <img src={preview} alt="Предпросмотр" />
-              {status === 'idle' && (
-                <button
-                  className="photo-upload-modal__remove"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setFile(null);
-                    setPreview(null);
-                  }}
-                  aria-label="Удалить"
-                >
-                  &times;
-                </button>
-              )}
-            </div>
-          ) : (
-            <div className="photo-upload-modal__placeholder">
-              <svg
-                className="photo-upload-modal__icon"
-                width="48"
-                height="48"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.5"
-              >
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                <polyline points="17 8 12 3 7 8" />
-                <line x1="12" y1="3" x2="12" y2="15" />
-              </svg>
-              <p className="photo-upload-modal__hint">
-                Перетащите фото или нажмите для выбора
-              </p>
-              <p className="photo-upload-modal__formats">JPEG или PNG</p>
-            </div>
-          )}
+          <div className="photo-upload-modal__placeholder">
+            <svg
+              className="photo-upload-modal__icon"
+              width="48"
+              height="48"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.5"
+            >
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+              <polyline points="17 8 12 3 7 8" />
+              <line x1="12" y1="3" x2="12" y2="15" />
+            </svg>
+            <p className="photo-upload-modal__hint">
+              {files.length > 0 ? 'Добавить ещё фото' : 'Перетащите фото или нажмите для выбора'}
+            </p>
+            <p className="photo-upload-modal__formats">JPEG или PNG (можно несколько)</p>
+          </div>
         </div>
+
+        {/* Previews Grid */}
+        {files.length > 0 && (
+          <div className="photo-upload-modal__previews">
+            {files.map(f => (
+              <div key={f.id} className="photo-upload-modal__preview-item">
+                <img src={f.preview} alt={f.file.name} />
+                {status === 'idle' && (
+                  <button
+                    className="photo-upload-modal__remove"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      removeFile(f.id);
+                    }}
+                    aria-label="Удалить"
+                  >
+                    &times;
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
 
         {/* Progress Bar */}
         {status === 'uploading' && (
@@ -269,9 +309,13 @@ const PhotoUploadModal: React.FC<PhotoUploadModalProps> = ({
           <button
             className="photo-upload-modal__btn photo-upload-modal__btn--primary"
             onClick={handleUpload}
-            disabled={!file || status === 'uploading' || status === 'success'}
+            disabled={files.length === 0 || status === 'uploading' || status === 'success'}
           >
-            {status === 'uploading' ? 'Загрузка...' : 'Загрузить'}
+            {status === 'uploading'
+              ? 'Загрузка...'
+              : files.length > 1
+                ? `Загрузить (${files.length})`
+                : 'Загрузить'}
           </button>
         </div>
       </div>
