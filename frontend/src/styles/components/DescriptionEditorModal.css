@@ -1,0 +1,333 @@
+/**
+ * DescriptionEditorModal Component Styles
+ *
+ * Full-screen modal for editing event descriptions.
+ * Uses design system tokens for consistency.
+ */
+
+/* ===========================================
+   1. OVERLAY
+   =========================================== */
+
+.description-modal__overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: var(--space-4);
+  animation: descriptionModalOverlayFadeIn 0.2s var(--ease-out);
+}
+
+@keyframes descriptionModalOverlayFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* ===========================================
+   2. MODAL CONTAINER
+   =========================================== */
+
+.description-modal {
+  position: relative;
+  background-color: var(--color-paper);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xl);
+  width: 100%;
+  max-width: 800px;
+  max-height: calc(100vh - var(--space-8));
+  display: flex;
+  flex-direction: column;
+  animation: descriptionModalSlideIn 0.25s var(--ease-out);
+}
+
+@keyframes descriptionModalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ===========================================
+   3. CLOSE BUTTON
+   =========================================== */
+
+.description-modal__close {
+  position: absolute;
+  top: var(--space-4);
+  right: var(--space-4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-full);
+  background-color: transparent;
+  color: var(--color-ink-muted);
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  z-index: 1;
+}
+
+.description-modal__close:hover {
+  background-color: var(--color-paper-muted);
+  color: var(--color-ink);
+}
+
+.description-modal__close:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ===========================================
+   4. HEADER
+   =========================================== */
+
+.description-modal__header {
+  padding: var(--space-6);
+  padding-bottom: var(--space-4);
+  border-bottom: 1px solid var(--color-rule-light);
+}
+
+.description-modal__title {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-weight: 600;
+  color: var(--color-ink);
+  margin: 0;
+  padding-right: var(--space-8);
+}
+
+.description-modal__subtitle {
+  font-size: var(--text-sm);
+  color: var(--color-ink-secondary);
+  margin: var(--space-2) 0 0 0;
+  line-height: var(--leading-snug);
+}
+
+/* ===========================================
+   5. CONTENT AREA
+   =========================================== */
+
+.description-modal__content {
+  flex: 1;
+  padding: var(--space-5) var(--space-6);
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.description-modal__textarea {
+  flex: 1;
+  width: 100%;
+  min-height: 300px;
+  padding: var(--space-4);
+  border: 1px solid var(--color-rule);
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
+  color: var(--color-ink);
+  background-color: var(--color-paper);
+  resize: vertical;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.description-modal__textarea:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-muted);
+}
+
+.description-modal__textarea::placeholder {
+  color: var(--color-ink-muted);
+}
+
+.description-modal__textarea:disabled {
+  background-color: var(--color-paper-muted);
+  cursor: not-allowed;
+}
+
+.description-modal__hint {
+  font-size: var(--text-xs);
+  color: var(--color-ink-muted);
+  margin: var(--space-2) 0 0 0;
+  text-align: right;
+}
+
+/* ===========================================
+   6. STATUS INDICATORS
+   =========================================== */
+
+.description-modal__status {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-6);
+  font-size: var(--text-sm);
+  font-weight: 500;
+}
+
+.description-modal__status--error {
+  background-color: var(--color-error-bg);
+  color: var(--color-error);
+}
+
+.description-modal__status--success {
+  background-color: var(--color-success-bg);
+  color: var(--color-success);
+}
+
+/* ===========================================
+   7. ACTIONS
+   =========================================== */
+
+.description-modal__actions {
+  display: flex;
+  gap: var(--space-3);
+  justify-content: flex-end;
+  padding: var(--space-4) var(--space-6);
+  border-top: 1px solid var(--color-rule-light);
+}
+
+.description-modal__btn {
+  padding: var(--space-3) var(--space-6);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  min-height: var(--touch-target);
+}
+
+.description-modal__btn--secondary {
+  background-color: var(--color-paper);
+  border-color: var(--color-rule);
+  color: var(--color-ink-secondary);
+}
+
+.description-modal__btn--secondary:hover:not(:disabled) {
+  background-color: var(--color-paper-muted);
+  border-color: var(--color-ink-muted);
+}
+
+.description-modal__btn--primary {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-paper);
+}
+
+.description-modal__btn--primary:hover:not(:disabled) {
+  background-color: var(--color-primary-dark);
+  border-color: var(--color-primary-dark);
+}
+
+.description-modal__btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ===========================================
+   8. RESPONSIVE - MOBILE
+   =========================================== */
+
+@media (max-width: 767px) {
+  .description-modal__overlay {
+    padding: 0;
+    align-items: flex-end;
+  }
+
+  .description-modal {
+    max-width: 100%;
+    max-height: 90vh;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    animation: descriptionModalSlideUp 0.3s var(--ease-out);
+  }
+
+  @keyframes descriptionModalSlideUp {
+    from {
+      opacity: 0;
+      transform: translateY(100%);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .description-modal__header {
+    padding: var(--space-5);
+    padding-bottom: var(--space-3);
+  }
+
+  .description-modal__title {
+    font-size: var(--text-md);
+  }
+
+  .description-modal__content {
+    padding: var(--space-4) var(--space-5);
+  }
+
+  .description-modal__textarea {
+    min-height: 200px;
+    font-size: var(--text-base);
+  }
+
+  .description-modal__actions {
+    padding: var(--space-4) var(--space-5);
+    /* Safe area for mobile devices */
+    padding-bottom: max(var(--space-4), env(safe-area-inset-bottom));
+  }
+
+  .description-modal__btn {
+    flex: 1;
+    padding: var(--space-3) var(--space-4);
+  }
+}
+
+/* ===========================================
+   9. REDUCED MOTION
+   =========================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .description-modal__overlay,
+  .description-modal {
+    animation: none;
+  }
+
+  .description-modal__close,
+  .description-modal__textarea,
+  .description-modal__btn {
+    transition: none;
+  }
+}
+
+/* ===========================================
+   10. PRINT STYLES
+   =========================================== */
+
+@media print {
+  .description-modal__overlay {
+    display: none !important;
+  }
+}

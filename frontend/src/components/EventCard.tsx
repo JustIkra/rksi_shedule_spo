@@ -1,6 +1,6 @@
 import { FC, useState, memo } from 'react';
 import { EventWithRelations, Link, Photo } from '../api/types';
-import EditableDescription from './EditableDescription';
+import DescriptionCell from './DescriptionCell';
 import Lightbox from './Lightbox';
 import ConfirmDialog from './ConfirmDialog';
 import PhotoUploadModal from './PhotoUploadModal';
@@ -115,15 +115,15 @@ const EventCard: FC<EventCardProps> = memo(({
           <span className="event-card__icon" aria-hidden="true">&#128221;</span>
           <div className="event-card__row-content">
             <span className="event-card__label">Пояснение</span>
-            {canEdit ? (
-              <EditableDescription
-                value={event.description}
-                eventId={event.id}
-                onSave={onUpdateDescription}
-              />
-            ) : (
-              <span className="event-card__value">{event.description || '-'}</span>
-            )}
+            <DescriptionCell
+              value={event.description}
+              eventId={event.id}
+              eventName={event.name}
+              onSave={onUpdateDescription}
+              canEdit={canEdit}
+              previewLength={60}
+              variant="card"
+            />
           </div>
         </div>
 

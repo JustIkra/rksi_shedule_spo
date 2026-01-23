@@ -1,6 +1,6 @@
 import { FC, useState, memo } from 'react';
 import { EventWithRelations, Link, Photo } from '../api/types';
-import EditableDescription from './EditableDescription';
+import DescriptionCell from './DescriptionCell';
 import Lightbox from './Lightbox';
 import ConfirmDialog from './ConfirmDialog';
 import PhotoUploadModal from './PhotoUploadModal';
@@ -80,15 +80,15 @@ const EventRow: FC<EventRowProps> = memo(({
 
       {/* Description */}
       <td className="events-table__cell events-table__cell--description">
-        {canEdit ? (
-          <EditableDescription
-            value={event.description}
-            eventId={event.id}
-            onSave={onUpdateDescription}
-          />
-        ) : (
-          <span>{event.description || '-'}</span>
-        )}
+        <DescriptionCell
+          value={event.description}
+          eventId={event.id}
+          eventName={event.name}
+          onSave={onUpdateDescription}
+          canEdit={canEdit}
+          previewLength={40}
+          variant="table"
+        />
       </td>
 
       {/* Links */}

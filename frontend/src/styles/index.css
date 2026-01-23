@@ -22,6 +22,8 @@
 @import './components/Lightbox.css';
 @import './components/ConfirmDialog.css';
 @import './components/EditableDescription.css';
+@import './components/DescriptionCell.css';
+@import './components/DescriptionEditorModal.css';
 @import './components/LoginForm.css';
 
 /* Pages */
