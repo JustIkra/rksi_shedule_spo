@@ -43,6 +43,32 @@
   );
 }
 
+.events-page__header-content {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+}
+
+.events-page__logo {
+  max-width: 60px;
+  height: auto;
+  object-fit: contain;
+}
+
+@media (min-width: 768px) {
+  .events-page__logo {
+    max-width: 80px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .events-page__logo {
+    max-width: 100px;
+  }
+}
+
 .events-page__title {
   margin: 0;
   font-family: var(--font-display);

@@ -5,13 +5,13 @@
  * generous whitespace, and a cohesive grid system.
  */
 
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Source+Sans+3:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Raleway:wght@500;600;700&family=Source+Sans+3:wght@400;500;600&display=swap');
 
 :root {
   /* ===========================================
      TYPOGRAPHY
      =========================================== */
-  --font-display: 'Playfair Display', Georgia, 'Times New Roman', serif;
+  --font-display: 'Raleway', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --font-body: 'Source Sans 3', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 
   /* Type Scale - optimized for readability */

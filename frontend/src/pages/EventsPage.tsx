@@ -162,7 +162,14 @@ function EventsPage() {
   return (
     <div className={`events-page${isMobile ? ' events-page--mobile' : ''}`}>
       <header className="events-page__header">
-        <h1 className="events-page__title">{pageTitle}</h1>
+        <div className="events-page__header-content">
+          <h1 className="events-page__title">{pageTitle}</h1>
+          <img
+            src="/logo.webp"
+            alt="Профессиональное образование Ростовской области"
+            className="events-page__logo"
+          />
+        </div>
       </header>
 
       <MonthTabs
