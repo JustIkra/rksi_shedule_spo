@@ -17,7 +17,7 @@ from app.api.deps import CurrentUser, DbSession
 from app.models.category import Category
 from app.models.event import Event
 from app.schemas.category import CategoryWithEvents
-from app.schemas.event import EventPublicUpdate, EventResponse, EventWithRelations
+from app.schemas.event import EventPublicUpdate, EventResponse, EventWithRelations, UNSET
 
 router = APIRouter()
 
@@ -210,9 +210,10 @@ async def update_event_description(
             detail=f"Event with id {event_id} not found",
         )
 
-    # Update only description field
-    if event_update.description is not None:
-        event.description = event_update.description
+    # Update only description field (UNSET means "not provided", None means "clear it")
+    description_value = event_update.get_description_or_unset()
+    if description_value is not UNSET:
+        event.description = description_value
 
     # Flush changes and refresh to get updated_at
     await db.flush()
