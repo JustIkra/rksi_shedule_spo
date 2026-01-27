@@ -53,3 +53,4 @@ uploads/
 htmlcov/
 .pytest_cache/
 .task
+docs/*
