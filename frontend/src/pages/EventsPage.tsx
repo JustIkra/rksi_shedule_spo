@@ -146,7 +146,7 @@ function EventsPage() {
   };
 
   const canEdit = isAuthenticated === true;
-  const pageTitle = isMobile ? 'План 2026' : 'План мероприятий СПО РО 2026';
+  const pageTitle = 'План мероприятий СПО РО 2026';
   const isAllYear = selectedMonth === 0;
 
   if (isLoading) {

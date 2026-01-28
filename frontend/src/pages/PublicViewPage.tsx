@@ -65,7 +65,7 @@ function PublicViewPage() {
     return filteredCategories.reduce((sum, cat) => sum + cat.events.length, 0);
   }, [filteredCategories]);
 
-  const pageTitle = isMobile ? 'План 2026' : 'План мероприятий СПО РО 2026';
+  const pageTitle = 'План мероприятий СПО РО 2026';
   const isAllYear = selectedMonth === 0;
 
   return (
