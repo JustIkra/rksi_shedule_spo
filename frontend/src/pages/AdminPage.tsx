@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { adminApi, EventCreate, EventUpdate, CategoryCreate } from '../api/admin';
+import AdminLoginForm from '../components/AdminLoginForm';
 import { CategoryWithEvents, Category, Event } from '../api/types';
 import EventEditModal from '../components/admin/EventEditModal';
 import ImportExport from '../components/admin/ImportExport';
@@ -16,7 +17,7 @@ const MONTHS = [
 
 function AdminPage() {
   const navigate = useNavigate();
-  const { isAuthenticated, isAdmin } = useAuth();
+  const { isAuthenticated, isAdmin, isLoading } = useAuth({ requireAuth: false });
 
   const [activeTab, setActiveTab] = useState<TabType>('events');
   const [categories, setCategories] = useState<CategoryWithEvents[]>([]);
@@ -65,14 +66,10 @@ function AdminPage() {
   }, [newEvent.category_id]);
 
   useEffect(() => {
-    if (isAuthenticated === false) {
-      navigate('/admin');
-    } else if (isAuthenticated && !isAdmin) {
-      navigate('/events');
-    } else if (isAuthenticated && isAdmin) {
+    if (isAuthenticated && isAdmin) {
       loadData();
     }
-  }, [isAuthenticated, isAdmin, navigate, loadData]);
+  }, [isAuthenticated, isAdmin, loadData]);
 
   const handleUpdateEvent = async (id: number, data: EventUpdate) => {
     await adminApi.updateEvent(id, data);
@@ -146,14 +143,42 @@ function AdminPage() {
 
   const handleLogout = () => {
     localStorage.removeItem('token');
-    navigate('/login');
+    navigate('/view');
   };
 
-  if (isAuthenticated === null || loading) {
+  if (isLoading) {
     return (
       <div className="admin-layout">
         <div className="admin-content">
           <p>Загрузка...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return <AdminLoginForm onSuccess={() => window.location.reload()} />;
+  }
+
+  if (!isAdmin) {
+    return (
+      <div className="admin-layout">
+        <div className="admin-content">
+          <div className="error-message">
+            <h2>Недостаточно прав</h2>
+            <p>У вас нет прав администратора для доступа к этой странице.</p>
+            <a href="/events" className="btn-primary">Перейти к мероприятиям</a>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (loading) {
+    return (
+      <div className="admin-layout">
+        <div className="admin-content">
+          <p>Загрузка данных...</p>
         </div>
       </div>
     );
