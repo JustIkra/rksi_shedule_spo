@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { useIsMobile } from '../hooks/useMediaQuery';
+import LoginForm from '../components/LoginForm';
 import { eventsApi } from '../api/events';
 import { CategoryWithEvents, EventWithRelations, Photo } from '../api/types';
 import MonthTabs from '../components/MonthTabs';
@@ -22,7 +23,7 @@ function eventMatchesSearch(event: EventWithRelations, query: string): boolean {
 }
 
 function EventsPage() {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, isLoading } = useAuth({ requireAuth: false });
   const isMobile = useIsMobile();
   const [selectedMonth, setSelectedMonth] = useState(() => new Date().getMonth() + 1);
   const [categories, setCategories] = useState<CategoryWithEvents[]>([]);
@@ -148,7 +149,7 @@ function EventsPage() {
   const pageTitle = isMobile ? 'План 2026' : 'План мероприятий СПО РО 2026';
   const isAllYear = selectedMonth === 0;
 
-  if (isAuthenticated === null) {
+  if (isLoading) {
     return (
       <div className="events-page">
         <div className="events-page__loading">
@@ -157,6 +158,10 @@ function EventsPage() {
         </div>
       </div>
     );
+  }
+
+  if (!isAuthenticated) {
+    return <LoginForm onSuccess={() => window.location.reload()} />;
   }
 
   return (
