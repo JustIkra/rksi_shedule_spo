@@ -161,17 +161,8 @@ function AdminPage() {
   }
 
   if (!isAdmin) {
-    return (
-      <div className="admin-layout">
-        <div className="admin-content">
-          <div className="error-message">
-            <h2>Недостаточно прав</h2>
-            <p>У вас нет прав администратора для доступа к этой странице.</p>
-            <a href="/events" className="btn-primary">Перейти к мероприятиям</a>
-          </div>
-        </div>
-      </div>
-    );
+    // Show admin login form for elevation (user is authenticated but not admin)
+    return <AdminLoginForm onSuccess={() => window.location.reload()} />;
   }
 
   if (loading) {
