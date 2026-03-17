@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useIsMobile } from '../hooks/useMediaQuery';
 import { eventsApi } from '../api/events';
 import { CategoryWithEvents, EventWithRelations } from '../api/types';
@@ -22,6 +23,7 @@ function eventMatchesSearch(event: EventWithRelations, query: string): boolean {
 const noop = async () => {};
 
 function PublicViewPage() {
+  const navigate = useNavigate();
   const isMobile = useIsMobile();
   const [selectedMonth, setSelectedMonth] = useState(() => new Date().getMonth() + 1);
   const [categories, setCategories] = useState<CategoryWithEvents[]>([]);
@@ -71,6 +73,18 @@ function PublicViewPage() {
   return (
     <div className={`events-page${isMobile ? ' events-page--mobile' : ''}`}>
       <header className="events-page__header">
+        <div className="events-page__header-top-bar">
+          <button
+            className="events-page__edit-btn"
+            onClick={() => navigate('/events')}
+          >
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M11.5 1.5L14.5 4.5L5 14H2V11L11.5 1.5Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M9.5 3.5L12.5 6.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+            </svg>
+            <span>Режим редактирования</span>
+          </button>
+        </div>
         <div className="events-page__header-content">
           <h1 className="events-page__title">{pageTitle}</h1>
           <img
