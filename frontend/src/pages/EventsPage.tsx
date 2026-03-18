@@ -1,8 +1,10 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { useIsMobile } from '../hooks/useMediaQuery';
 import LoginForm from '../components/LoginForm';
 import { eventsApi } from '../api/events';
+import { authApi } from '../api/auth';
 import { CategoryWithEvents, EventWithRelations, Photo } from '../api/types';
 import MonthTabs from '../components/MonthTabs';
 import SearchInput from '../components/SearchInput';
@@ -23,6 +25,7 @@ function eventMatchesSearch(event: EventWithRelations, query: string): boolean {
 }
 
 function EventsPage() {
+  const navigate = useNavigate();
   const { isAuthenticated, isLoading } = useAuth({ requireAuth: false });
   const isMobile = useIsMobile();
   const [selectedMonth, setSelectedMonth] = useState(() => new Date().getMonth() + 1);
@@ -145,6 +148,16 @@ function EventsPage() {
     })));
   };
 
+  const handleLogout = async () => {
+    try {
+      await authApi.logout();
+    } catch {
+      // ignore
+    }
+    localStorage.removeItem('token');
+    navigate('/view');
+  };
+
   const canEdit = isAuthenticated === true;
   const pageTitle = 'План мероприятий СПО РО 2026';
   const isAllYear = selectedMonth === 0;
@@ -167,6 +180,19 @@ function EventsPage() {
   return (
     <div className={`events-page${isMobile ? ' events-page--mobile' : ''}`}>
       <header className="events-page__header">
+        <div className="events-page__header-top-bar">
+          <button
+            className="events-page__exit-btn"
+            onClick={handleLogout}
+          >
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M6 14H3C2.44772 14 2 13.5523 2 13V3C2 2.44772 2.44772 2 3 2H6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M10.5 11.5L14 8L10.5 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M14 8H6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+            </svg>
+            <span>Выйти из редактирования</span>
+          </button>
+        </div>
         <div className="events-page__header-content">
           <h1 className="events-page__title">{pageTitle}</h1>
           <img
