@@ -1,6 +1,7 @@
 import { FC, useState, useRef, useEffect, useCallback } from 'react';
 import { EventWithRelations, Link, Photo } from '../api/types';
 import { photosApi } from '../api/photos';
+import { eventsApi } from '../api/events';
 import '../styles/components/EventEditModal.css';
 
 interface EventEditModalProps {
@@ -267,6 +268,13 @@ const EventEditModal: FC<EventEditModalProps> = ({
           onPhotosAdded(event.id, photos);
         }
         setUploading(false);
+      }
+
+      // Publish to WordPress (non-blocking — save is already done)
+      try {
+        await eventsApi.publishToWP(event.id);
+      } catch (wpError) {
+        console.error('WordPress publish failed:', wpError);
       }
 
       onClose();

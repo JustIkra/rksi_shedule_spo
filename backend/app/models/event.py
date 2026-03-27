@@ -43,6 +43,7 @@ class Event(Base):
     location: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     description: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     sort_order: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    wp_post_id: Mapped[Optional[int]] = mapped_column(Integer, nullable=True, default=None)
 
     # Timestamps
     created_at: Mapped[datetime] = mapped_column(

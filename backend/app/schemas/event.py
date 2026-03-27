@@ -113,6 +113,7 @@ class EventResponse(BaseModel):
     description: str | None = None
     sort_order: int
     category_id: int
+    wp_post_id: int | None = None
     created_at: datetime
     updated_at: datetime
 

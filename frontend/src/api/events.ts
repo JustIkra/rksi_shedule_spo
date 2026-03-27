@@ -53,4 +53,8 @@ export const eventsApi = {
   // Удалить фото
   deletePhoto: (_eventId: number, photoId: number) =>
     api.delete(`/photos/${photoId}`),
+
+  // Опубликовать в WordPress
+  publishToWP: (eventId: number) =>
+    api.post<EventWithRelations>(`/events/${eventId}/publish-wp`),
 };

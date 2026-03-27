@@ -26,6 +26,11 @@ class Settings(BaseSettings):
     initial_admin_password: str = "admin123"
     admin_url_token: str = "secret-admin-panel"
 
+    # WordPress integration
+    wp_domain: str = ""
+    wp_username: str = ""
+    wp_password: str = ""
+
     @property
     def database_url(self) -> str:
         return f"postgresql+asyncpg://{self.postgres_user}:{self.postgres_password}@{self.postgres_host}:{self.postgres_port}/{self.postgres_db}"

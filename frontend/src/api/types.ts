@@ -31,6 +31,7 @@ export interface Event {
   location: string | null;
   description: string | null;
   sort_order: number;
+  wp_post_id: number | null;
   created_at: string;
   updated_at: string;
 }

@@ -5,8 +5,10 @@ Provides endpoints for:
 - GET /: List events by month (grouped by categories)
 - GET /{event_id}: Get single event with relations
 - PATCH /{event_id}: Update event description (requires auth)
+- POST /{event_id}/publish-wp: Publish event to WordPress (requires auth)
 """
 
+import logging
 from typing import Annotated
 
 from fastapi import APIRouter, HTTPException, Query, status
@@ -14,10 +16,14 @@ from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 
 from app.api.deps import CurrentUser, DbSession
+from app.config import get_settings
 from app.models.category import Category
 from app.models.event import Event
 from app.schemas.category import CategoryWithEvents
 from app.schemas.event import EventPublicUpdate, EventResponse, EventWithRelations, UNSET
+from app.services.wordpress import WordPressError, WordPressService
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
@@ -220,3 +226,63 @@ async def update_event_description(
     await db.refresh(event)
 
     return EventResponse.model_validate(event)
+
+
+@router.post(
+    "/{event_id}/publish-wp",
+    response_model=EventWithRelations,
+    summary="Publish event to WordPress",
+    description="Publish or update the event as a WordPress post. "
+    "Uploads photos, builds gallery HTML, and sets the event's wp_post_id.",
+)
+async def publish_to_wordpress(
+    db: DbSession,
+    event_id: int,
+    current_user: CurrentUser,
+) -> EventWithRelations:
+    settings = get_settings()
+
+    wp_service = WordPressService(
+        domain=settings.wp_domain,
+        username=settings.wp_username,
+        password=settings.wp_password,
+        upload_dir=settings.upload_dir,
+    )
+
+    if not wp_service.is_configured():
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="WordPress integration is not configured",
+        )
+
+    stmt = (
+        select(Event)
+        .where(Event.id == event_id)
+        .options(
+            selectinload(Event.links),
+            selectinload(Event.photos),
+        )
+    )
+    result = await db.execute(stmt)
+    event = result.scalar_one_or_none()
+
+    if event is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Event with id {event_id} not found",
+        )
+
+    try:
+        wp_post_id = await wp_service.publish_event(event, event.photos, event.links)
+        event.wp_post_id = wp_post_id
+        await db.flush()
+        await db.refresh(event)
+        logger.info("Event %d published to WP as post %d", event_id, wp_post_id)
+    except WordPressError as e:
+        logger.error("WordPress publish failed for event %d: %s", event_id, e)
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY,
+            detail=f"WordPress publish failed: {e}",
+        )
+
+    return EventWithRelations.model_validate(event)

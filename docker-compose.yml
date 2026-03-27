@@ -28,6 +28,9 @@ services:
       - UPLOAD_DIR=/app/uploads
       - INITIAL_PUBLIC_PASSWORD=${INITIAL_PUBLIC_PASSWORD:-public123}
       - INITIAL_ADMIN_PASSWORD=${INITIAL_ADMIN_PASSWORD:-admin123}
+      - WP_DOMAIN=${WP_DOMAIN:-}
+      - WP_USERNAME=${WP_USERNAME:-}
+      - WP_PASSWORD=${WP_PASSWORD:-}
     volumes:
       - ./uploads:/app/uploads
     depends_on:
