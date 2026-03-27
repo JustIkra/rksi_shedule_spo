@@ -39,6 +39,9 @@ const EventsTable: FC<EventsTableProps> = ({
           <th className="events-table__header-cell events-table__header-cell--description">Пояснение</th>
           <th className="events-table__header-cell events-table__header-cell--links">Ссылки</th>
           <th className="events-table__header-cell events-table__header-cell--photos">Фото</th>
+          {canEdit && (
+            <th className="events-table__header-cell events-table__header-cell--actions"></th>
+          )}
         </tr>
       </thead>
       <tbody className="events-table__body">

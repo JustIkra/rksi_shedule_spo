@@ -4,7 +4,9 @@ import DescriptionCell from './DescriptionCell';
 import Lightbox from './Lightbox';
 import ConfirmDialog from './ConfirmDialog';
 import PhotoUploadModal from './PhotoUploadModal';
+import EventEditModal from './EventEditModal';
 import '../styles/components/EventRow.css';
+import '../styles/components/EventEditModal.css';
 import '../styles/components/DescriptionCell.css';
 
 interface EventRowProps {
@@ -29,33 +31,13 @@ const EventRow: FC<EventRowProps> = memo(({
   onDeletePhoto,
   canEdit
 }) => {
-  const [showLinkForm, setShowLinkForm] = useState(false);
-  const [newLinkUrl, setNewLinkUrl] = useState('');
-  const [newLinkTitle, setNewLinkTitle] = useState('');
-  const [addingLink, setAddingLink] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
   const [showUploadModal, setShowUploadModal] = useState(false);
 
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
   const [deletePhotoTarget, setDeletePhotoTarget] = useState<Photo | null>(null);
   const [deleteLinkTarget, setDeleteLinkTarget] = useState<Link | null>(null);
-
-  const handleAddLink = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newLinkUrl.trim()) return;
-
-    setAddingLink(true);
-    try {
-      await onAddLink(event.id, newLinkUrl.trim(), newLinkTitle.trim() || newLinkUrl.trim());
-      setNewLinkUrl('');
-      setNewLinkTitle('');
-      setShowLinkForm(false);
-    } catch (error) {
-      console.error('Failed to add link:', error);
-    } finally {
-      setAddingLink(false);
-    }
-  };
 
   const handlePhotosUploaded = (photos: Photo[]) => {
     if (onPhotosAdded) {
@@ -65,13 +47,13 @@ const EventRow: FC<EventRowProps> = memo(({
 
   return (
     <tr className="events-table__row">
-      {/* Name - Always visible */}
+      {/* Name */}
       <td className="events-table__cell events-table__cell--name">{event.name}</td>
 
-      {/* Date - Always visible */}
+      {/* Date */}
       <td className="events-table__cell events-table__cell--date">{event.event_date || '-'}</td>
 
-      {/* Responsible - Always visible */}
+      {/* Responsible */}
       <td className="events-table__cell events-table__cell--responsible">{event.responsible || '-'}</td>
 
       {/* Location */}
@@ -79,20 +61,20 @@ const EventRow: FC<EventRowProps> = memo(({
         {event.location || '-'}
       </td>
 
-      {/* Description */}
+      {/* Description - read-only display */}
       <td className="events-table__cell events-table__cell--description">
         <DescriptionCell
           value={event.description}
           eventId={event.id}
           eventName={event.name}
           onSave={onUpdateDescription}
-          canEdit={canEdit}
+          canEdit={false}
           previewLength={40}
           variant="table"
         />
       </td>
 
-      {/* Links */}
+      {/* Links - read-only display */}
       <td className="events-table__cell events-table__cell--links">
         <div className="event-row__links">
           {event.links.map((link: Link) => (
@@ -100,34 +82,18 @@ const EventRow: FC<EventRowProps> = memo(({
               <a href={link.url} target="_blank" rel="noopener noreferrer" title={link.url}>
                 {link.title || 'Ссылка'}
               </a>
-              {canEdit && (
-                <button
-                  className="event-row__link-delete"
-                  onClick={() => setDeleteLinkTarget(link)}
-                  title="Удалить ссылку"
-                  aria-label="Удалить ссылку"
-                >
-                  x
-                </button>
-              )}
             </div>
           ))}
-
-          {canEdit && (
-            <button
-              className="description-cell__add-btn"
-              onClick={() => setShowLinkForm(true)}
-            >
-              + Добавить
-            </button>
+          {event.links.length === 0 && (
+            <span className="event-row__empty">-</span>
           )}
         </div>
       </td>
 
-      {/* Photos Gallery */}
+      {/* Photos Gallery - read-only display */}
       <td className="events-table__cell events-table__cell--photos">
         <div className="event-row__gallery">
-          {event.photos.length > 0 && (
+          {event.photos.length > 0 ? (
             <div
               className="event-row__gallery-preview"
               onClick={() => setLightboxIndex(0)}
@@ -148,20 +114,29 @@ const EventRow: FC<EventRowProps> = memo(({
               )}
               <div className="event-row__gallery-badge">{event.photos.length}</div>
             </div>
-          )}
-
-          {canEdit && (
-            <button
-              className="event-row__photo-add"
-              onClick={() => setShowUploadModal(true)}
-              title="Загрузить фото"
-              aria-label="Загрузить фото"
-            >
-              +
-            </button>
+          ) : (
+            <span className="event-row__empty">-</span>
           )}
         </div>
       </td>
+
+      {/* Edit button column */}
+      {canEdit && (
+        <td className="events-table__cell events-table__cell--actions">
+          <button
+            className="event-edit-btn"
+            onClick={() => setShowEditModal(true)}
+            title="Редактировать"
+          >
+            <span className="event-edit-btn__icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+              </svg>
+            </span>
+          </button>
+        </td>
+      )}
 
       {lightboxIndex !== null && event.photos.length > 0 && (
         <Lightbox
@@ -181,7 +156,6 @@ const EventRow: FC<EventRowProps> = memo(({
         onConfirm={() => {
           if (deletePhotoTarget) {
             onDeletePhoto(event.id, deletePhotoTarget.id);
-            // Close lightbox if deleting the last photo or adjust index
             if (event.photos.length <= 1) {
               setLightboxIndex(null);
             } else if (lightboxIndex !== null && lightboxIndex >= event.photos.length - 1) {
@@ -206,62 +180,19 @@ const EventRow: FC<EventRowProps> = memo(({
         onCancel={() => setDeleteLinkTarget(null)}
       />
 
-      {/* Modal for adding links */}
-      {showLinkForm && (
-        <div className="link-modal-overlay" onClick={() => setShowLinkForm(false)}>
-          <div className="link-modal" onClick={(e) => e.stopPropagation()}>
-            <h3 className="link-modal__title">Добавить ссылку</h3>
-            <form onSubmit={handleAddLink}>
-              <div className="link-modal__field">
-                <label className="link-modal__label" htmlFor={`link-url-${event.id}`}>
-                  URL ссылки
-                </label>
-                <input
-                  id={`link-url-${event.id}`}
-                  type="url"
-                  className="link-modal__input"
-                  placeholder="https://example.com"
-                  value={newLinkUrl}
-                  onChange={(e) => setNewLinkUrl(e.target.value)}
-                  required
-                  autoFocus
-                />
-              </div>
-              <div className="link-modal__field">
-                <label className="link-modal__label" htmlFor={`link-title-${event.id}`}>
-                  Название (необязательно)
-                </label>
-                <input
-                  id={`link-title-${event.id}`}
-                  type="text"
-                  className="link-modal__input"
-                  placeholder="Название ссылки"
-                  value={newLinkTitle}
-                  onChange={(e) => setNewLinkTitle(e.target.value)}
-                />
-              </div>
-              <div className="link-modal__actions">
-                <button
-                  type="button"
-                  className="link-modal__btn link-modal__btn--cancel"
-                  onClick={() => setShowLinkForm(false)}
-                >
-                  Отмена
-                </button>
-                <button
-                  type="submit"
-                  className="link-modal__btn link-modal__btn--submit"
-                  disabled={addingLink}
-                >
-                  {addingLink ? 'Добавление...' : 'Добавить'}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+      {/* Combined edit modal */}
+      <EventEditModal
+        isOpen={showEditModal}
+        event={event}
+        onSaveDescription={onUpdateDescription}
+        onAddLink={onAddLink}
+        onDeleteLink={onDeleteLink}
+        onPhotosAdded={onPhotosAdded}
+        onDeletePhoto={onDeletePhoto}
+        onClose={() => setShowEditModal(false)}
+      />
 
-      {/* Photo upload modal */}
+      {/* Photo upload modal (kept for lightbox delete flow) */}
       <PhotoUploadModal
         eventId={event.id}
         isOpen={showUploadModal}

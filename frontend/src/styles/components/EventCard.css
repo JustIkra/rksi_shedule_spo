@@ -443,7 +443,23 @@
 }
 
 /* ===========================================
-   11. REDUCED MOTION
+   11. EDIT BUTTON ROW
+   =========================================== */
+
+.event-card__row--edit {
+  display: flex;
+  justify-content: center;
+  padding: var(--space-3) var(--space-4);
+}
+
+.event-card__row--edit .event-edit-btn {
+  width: 100%;
+  justify-content: center;
+  padding: var(--space-3) var(--space-4);
+}
+
+/* ===========================================
+   12. REDUCED MOTION
    =========================================== */
 
 @media (prefers-reduced-motion: reduce) {

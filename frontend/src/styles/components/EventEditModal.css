@@ -1,0 +1,711 @@
+/**
+ * EventEditModal Component Styles
+ *
+ * Combined modal for editing description, links, and photos.
+ * Uses design system tokens for consistency.
+ */
+
+/* ===========================================
+   1. OVERLAY
+   =========================================== */
+
+.event-edit-modal__overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: var(--space-4);
+  animation: eventEditOverlayFadeIn 0.2s var(--ease-out);
+}
+
+@keyframes eventEditOverlayFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ===========================================
+   2. MODAL CONTAINER
+   =========================================== */
+
+.event-edit-modal {
+  position: relative;
+  background-color: var(--color-paper);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xl);
+  width: 100%;
+  max-width: 680px;
+  max-height: calc(100vh - var(--space-8));
+  display: flex;
+  flex-direction: column;
+  animation: eventEditSlideIn 0.25s var(--ease-out);
+}
+
+@keyframes eventEditSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ===========================================
+   3. CLOSE BUTTON
+   =========================================== */
+
+.event-edit-modal__close {
+  position: absolute;
+  top: var(--space-4);
+  right: var(--space-4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-full);
+  background-color: transparent;
+  color: var(--color-ink-muted);
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  z-index: 1;
+}
+
+.event-edit-modal__close:hover {
+  background-color: var(--color-paper-muted);
+  color: var(--color-ink);
+}
+
+.event-edit-modal__close:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ===========================================
+   4. HEADER
+   =========================================== */
+
+.event-edit-modal__header {
+  padding: var(--space-6);
+  padding-bottom: var(--space-4);
+  border-bottom: 1px solid var(--color-rule-light);
+}
+
+.event-edit-modal__title {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-weight: 600;
+  color: var(--color-ink);
+  margin: 0;
+  padding-right: var(--space-8);
+}
+
+.event-edit-modal__subtitle {
+  font-size: var(--text-sm);
+  color: var(--color-ink-secondary);
+  margin: var(--space-2) 0 0 0;
+  line-height: var(--leading-snug);
+}
+
+/* ===========================================
+   5. BODY (scrollable)
+   =========================================== */
+
+.event-edit-modal__body {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--space-5) var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+/* ===========================================
+   6. SECTION
+   =========================================== */
+
+.event-edit-modal__section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.event-edit-modal__section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.event-edit-modal__section-title {
+  font-family: var(--font-display);
+  font-size: var(--text-md);
+  font-weight: 600;
+  color: var(--color-ink);
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+}
+
+.event-edit-modal__counter {
+  font-size: var(--text-xs);
+  color: var(--color-ink-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.event-edit-modal__counter--valid {
+  color: var(--color-success);
+}
+
+.event-edit-modal__required-hint {
+  font-size: var(--text-xs);
+  color: var(--color-error);
+  font-weight: 500;
+}
+
+/* ===========================================
+   7. TEXTAREA (Description)
+   =========================================== */
+
+.event-edit-modal__textarea {
+  width: 100%;
+  min-height: 120px;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--color-rule);
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
+  color: var(--color-ink);
+  background-color: var(--color-paper);
+  resize: vertical;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.event-edit-modal__textarea:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-muted);
+}
+
+.event-edit-modal__textarea::placeholder {
+  color: var(--color-ink-muted);
+}
+
+.event-edit-modal__textarea:disabled {
+  background-color: var(--color-paper-muted);
+  cursor: not-allowed;
+}
+
+.event-edit-modal__textarea--error {
+  border-color: var(--color-error);
+}
+
+.event-edit-modal__textarea--error:focus {
+  box-shadow: 0 0 0 3px rgba(184, 59, 59, 0.1);
+}
+
+.event-edit-modal__field-error {
+  font-size: var(--text-xs);
+  color: var(--color-error);
+  margin: 0;
+}
+
+/* ===========================================
+   8. LINKS
+   =========================================== */
+
+.event-edit-modal__links-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.event-edit-modal__link-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  background-color: var(--color-paper-muted);
+  border-radius: var(--radius-md);
+  transition: background-color var(--transition-fast);
+}
+
+.event-edit-modal__link-item:hover {
+  background-color: var(--color-paper-dark);
+}
+
+.event-edit-modal__link-item a {
+  flex: 1;
+  color: var(--color-primary);
+  font-size: var(--text-sm);
+  text-decoration: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.event-edit-modal__link-item a:hover {
+  text-decoration: underline;
+}
+
+.event-edit-modal__link-delete {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-full);
+  background-color: transparent;
+  color: var(--color-ink-muted);
+  font-size: 16px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  flex-shrink: 0;
+}
+
+.event-edit-modal__link-delete:hover {
+  background-color: var(--color-error);
+  color: var(--color-paper);
+}
+
+.event-edit-modal__link-delete:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.event-edit-modal__link-form {
+  display: flex;
+  gap: var(--space-2);
+  align-items: flex-end;
+}
+
+.event-edit-modal__link-inputs {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.event-edit-modal__input {
+  width: 100%;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-rule);
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+  color: var(--color-ink);
+  background-color: var(--color-paper);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.event-edit-modal__input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-muted);
+}
+
+.event-edit-modal__input::placeholder {
+  color: var(--color-ink-muted);
+}
+
+.event-edit-modal__input:disabled {
+  background-color: var(--color-paper-muted);
+  cursor: not-allowed;
+}
+
+.event-edit-modal__link-add-btn {
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid var(--color-primary);
+  border-radius: var(--radius-md);
+  background-color: transparent;
+  color: var(--color-primary);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all var(--transition-fast);
+  min-height: 36px;
+}
+
+.event-edit-modal__link-add-btn:hover:not(:disabled) {
+  background-color: var(--color-primary);
+  color: var(--color-paper);
+}
+
+.event-edit-modal__link-add-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ===========================================
+   9. PHOTOS
+   =========================================== */
+
+.event-edit-modal__photos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  gap: var(--space-2);
+}
+
+.event-edit-modal__photos-grid--pending {
+  margin-top: var(--space-2);
+}
+
+.event-edit-modal__photo-item {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid var(--color-rule);
+}
+
+.event-edit-modal__photo-item--pending {
+  border-style: dashed;
+  border-color: var(--color-primary);
+}
+
+.event-edit-modal__photo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.event-edit-modal__photo-delete {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-full);
+  background-color: rgba(0, 0, 0, 0.6);
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+}
+
+.event-edit-modal__photo-item:hover .event-edit-modal__photo-delete {
+  opacity: 1;
+}
+
+.event-edit-modal__photo-delete:hover {
+  background-color: var(--color-error);
+}
+
+.event-edit-modal__photo-delete:disabled {
+  cursor: not-allowed;
+}
+
+.event-edit-modal__photo-badge {
+  position: absolute;
+  bottom: 4px;
+  left: 4px;
+  padding: 1px 6px;
+  background-color: var(--color-primary);
+  color: var(--color-paper);
+  font-size: 10px;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+}
+
+/* ===========================================
+   10. DROPZONE
+   =========================================== */
+
+.event-edit-modal__dropzone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  padding: var(--space-5) var(--space-4);
+  border: 2px dashed var(--color-rule);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  text-align: center;
+}
+
+.event-edit-modal__dropzone:hover {
+  border-color: var(--color-primary);
+  background-color: var(--color-primary-muted);
+}
+
+.event-edit-modal__dropzone--dragging {
+  border-color: var(--color-primary);
+  background-color: var(--color-primary-muted);
+}
+
+.event-edit-modal__dropzone-icon {
+  color: var(--color-ink-muted);
+}
+
+.event-edit-modal__dropzone-text {
+  font-size: var(--text-sm);
+  color: var(--color-ink-secondary);
+  margin: 0;
+}
+
+.event-edit-modal__dropzone-formats {
+  font-size: var(--text-xs);
+  color: var(--color-ink-muted);
+  margin: 0;
+}
+
+/* ===========================================
+   11. PROGRESS BAR
+   =========================================== */
+
+.event-edit-modal__progress {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.event-edit-modal__progress-bar {
+  flex: 1;
+  height: 6px;
+  background-color: var(--color-paper-muted);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.event-edit-modal__progress-fill {
+  height: 100%;
+  background-color: var(--color-primary);
+  border-radius: var(--radius-full);
+  transition: width 0.3s ease;
+}
+
+.event-edit-modal__progress-text {
+  font-size: var(--text-xs);
+  color: var(--color-ink-muted);
+  font-variant-numeric: tabular-nums;
+  min-width: 36px;
+  text-align: right;
+}
+
+/* ===========================================
+   12. STATUS
+   =========================================== */
+
+.event-edit-modal__status {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-6);
+  font-size: var(--text-sm);
+  font-weight: 500;
+}
+
+.event-edit-modal__status--error {
+  background-color: var(--color-error-bg);
+  color: var(--color-error);
+}
+
+/* ===========================================
+   13. ACTIONS
+   =========================================== */
+
+.event-edit-modal__actions {
+  display: flex;
+  gap: var(--space-3);
+  justify-content: flex-end;
+  padding: var(--space-4) var(--space-6);
+  border-top: 1px solid var(--color-rule-light);
+}
+
+.event-edit-modal__btn {
+  padding: var(--space-3) var(--space-6);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  min-height: var(--touch-target);
+}
+
+.event-edit-modal__btn--secondary {
+  background-color: var(--color-paper);
+  border-color: var(--color-rule);
+  color: var(--color-ink-secondary);
+}
+
+.event-edit-modal__btn--secondary:hover:not(:disabled) {
+  background-color: var(--color-paper-muted);
+  border-color: var(--color-ink-muted);
+}
+
+.event-edit-modal__btn--primary {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-paper);
+}
+
+.event-edit-modal__btn--primary:hover:not(:disabled) {
+  background-color: var(--color-primary-dark);
+  border-color: var(--color-primary-dark);
+}
+
+.event-edit-modal__btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ===========================================
+   14. RESPONSIVE - MOBILE
+   =========================================== */
+
+@media (max-width: 767px) {
+  .event-edit-modal__overlay {
+    padding: 0;
+    align-items: flex-end;
+  }
+
+  .event-edit-modal {
+    max-width: 100%;
+    max-height: 95vh;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    animation: eventEditSlideUp 0.3s var(--ease-out);
+  }
+
+  @keyframes eventEditSlideUp {
+    from {
+      opacity: 0;
+      transform: translateY(100%);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .event-edit-modal__header {
+    padding: var(--space-5);
+    padding-bottom: var(--space-3);
+  }
+
+  .event-edit-modal__title {
+    font-size: var(--text-md);
+  }
+
+  .event-edit-modal__body {
+    padding: var(--space-4) var(--space-5);
+    gap: var(--space-5);
+  }
+
+  .event-edit-modal__textarea {
+    min-height: 100px;
+  }
+
+  .event-edit-modal__link-form {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .event-edit-modal__link-add-btn {
+    align-self: flex-start;
+  }
+
+  .event-edit-modal__photos-grid {
+    grid-template-columns: repeat(auto-fill, minmax(64px, 1fr));
+  }
+
+  .event-edit-modal__actions {
+    padding: var(--space-4) var(--space-5);
+    padding-bottom: max(var(--space-4), env(safe-area-inset-bottom));
+  }
+
+  .event-edit-modal__btn {
+    flex: 1;
+    padding: var(--space-3) var(--space-4);
+  }
+}
+
+/* ===========================================
+   15. EDIT BUTTON (in table row)
+   =========================================== */
+
+.event-edit-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-rule);
+  border-radius: var(--radius-md);
+  background-color: var(--color-paper);
+  color: var(--color-primary);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.event-edit-btn:hover {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-paper);
+}
+
+.event-edit-btn__icon {
+  display: flex;
+  align-items: center;
+}
+
+/* ===========================================
+   16. REDUCED MOTION
+   =========================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .event-edit-modal__overlay,
+  .event-edit-modal {
+    animation: none;
+  }
+
+  .event-edit-modal__close,
+  .event-edit-modal__textarea,
+  .event-edit-modal__input,
+  .event-edit-modal__btn,
+  .event-edit-modal__link-add-btn,
+  .event-edit-modal__link-delete,
+  .event-edit-modal__photo-delete,
+  .event-edit-modal__dropzone,
+  .event-edit-modal__link-item,
+  .event-edit-btn {
+    transition: none;
+  }
+}
+
+/* ===========================================
+   17. PRINT
+   =========================================== */
+
+@media print {
+  .event-edit-modal__overlay {
+    display: none !important;
+  }
+}
