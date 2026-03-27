@@ -18,5 +18,7 @@ COPY . .
 # Create uploads directory
 RUN mkdir -p /app/uploads
 
-# Run migrations then start application
-CMD ["sh", "-c", "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000"]
+# Entrypoint: detect DB state, stamp alembic if needed, run migrations, start app
+COPY entrypoint.sh .
+RUN chmod +x entrypoint.sh
+CMD ["./entrypoint.sh"]
