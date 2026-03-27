@@ -18,5 +18,5 @@ COPY . .
 # Create uploads directory
 RUN mkdir -p /app/uploads
 
-# Run application
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Run migrations then start application
+CMD ["sh", "-c", "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000"]
